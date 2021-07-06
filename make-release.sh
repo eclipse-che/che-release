@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # overall Che release orchestration script
-# see ../README.md for more info
+# see ../README.md for more info 
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" || exit; pwd)
 REGISTRY="quay.io"
