@@ -15,6 +15,10 @@ on:
         description: 'If true, will also release Che Parent.'
         required: false
         default: 'false'
+      releaseDwoOperator:
+        description: 'If true, will also release DewWorkspace Operator.'
+        required: false
+        default: 'false'
       versionParent:
         description: 'The version of Che Parent'
         required: false
@@ -28,10 +32,10 @@ on:
 #4: ChePluginRegistry;
 #5: DwoCheOperator;  
 #6: CheOperator; 
-# Default: "1,2,3,4,5,6". Omit phases that have successfully run.
+# Default: "1,2,3,4,5". Omit phases that have successfully run.
 '
         required: true
-        default: '1,2,3,4,5,6'
+        default: '1,2,3,4,5'
 jobs:
   pre_job:
     runs-on: ubuntu-latest
@@ -115,6 +119,7 @@ jobs:
           PHASES="${{ github.event.inputs.phases }}"
           PARENT_VERSION="${{ github.event.inputs.versionParent }}"
           PARENT_RELEASE="${{ github.event.inputs.releaseParent }}"
+          RELEASE_DWO_OPERATOR="${{ github.event.inpust.releaseDwoOperator }}"
           export CHE_GITHUB_SSH_KEY=${{ secrets.CHE_GITHUB_SSH_KEY }}
 
           export QUAY_ECLIPSE_CHE_USERNAME=${{ secrets.QUAY_USERNAME }}
@@ -125,4 +130,4 @@ jobs:
           export CHE_BOT_GITHUB_TOKEN=${{ secrets.CHE_BOT_GITHUB_TOKEN }}
           export CHE_INCUBATOR_BOT_GITHUB_TOKEN=${{ secrets.CHE_INCUBATOR_BOT_GITHUB_TOKEN }}
           set -e
-          ./make-release.sh -v ${CHE_VERSION} -dv ${DWO_VERSION} -p ${PHASES} --parent-version ${PARENT_VERSION} 
+          ./make-release.sh -v ${CHE_VERSION} -dv ${DWO_VERSION} -p ${PHASES} --parent-version ${PARENT_VERSION} --release-dwo-operator ${RELEASE_DWO_OPERATOR}

@@ -111,6 +111,10 @@ evaluateCheVariables() {
         RELEASE_CHE_PARENT="false"
     fi
 
+    if [[ ${RELEASE_DWO_OPERATOR} != "true" ]]; then
+        RELEASE_DWO_OPERATOR="false"
+    fi
+
     if [[ -z ${VERSION_CHE_PARENT} ]]; then
         # get latest higher 7.yy.z tag of Che Parent as version
         VERSION_CHE_PARENT=$(git -c 'versionsort.suffix=-' ls-remote --tags  https://github.com/eclipse/che-parent.git | cut --delimiter='/' --fields=3 | grep 7.* | sort --version-sort | tail --lines=1)
@@ -254,6 +258,7 @@ while [[ "$#" -gt 0 ]]; do
     '-p'|'--phases') PHASES="$2"; shift 1;;
     '--release-parent') RELEASE_CHE_PARENT="true"; shift 0;;
     '--parent-version') VERSION_CHE_PARENT="$2"; shift 1;;
+    '--release-dwo-operator') RELEASE_DWO_OPERATOR="true"; shift 0;;
   esac
   shift 1
 done
@@ -282,7 +287,9 @@ if [[ ${PHASES} == *"1"* ]]; then
     releaseMachineExec
     releaseDevfileRegistry
     releaseDashboard
-    releaseDwoOperator
+    if [[ ${RELEASE_DWO_OPERATOR} ]]; then
+        releaseDwoOperator
+    fi
     branchJWTProxyAndKIP
     releaseCheServer
     releaseChe
