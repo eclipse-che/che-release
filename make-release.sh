@@ -287,7 +287,6 @@ if [[ ${PHASES} == *"1"* ]]; then
     if [[ ${RELEASE_DWO_OPERATOR} ]]; then
         releaseDwoOperator
     fi
-    releaseDwoOperator
     createBranches
     releaseCheServer
     releaseChe
