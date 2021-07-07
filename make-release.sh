@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # overall Che release orchestration script
-# see ../README.md for more info
+# see ../README.md for more info 
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" || exit; pwd)
 REGISTRY="quay.io"
@@ -205,7 +205,8 @@ releasePluginRegistry() {
     invokeAction eclipse-che/che-plugin-registry "Release Che Plugin Registry" "4191251" "version=${CHE_VERSION}"
 }
 
-branchJWTProxyAndKIP() {
+createBranches() {
+    invokeAction che-incubator/configbump "Create branch" "11029799" "branch=${BRANCH}"
     invokeAction eclipse/che-jwtproxy "Create branch" "5410230" "branch=${BRANCH}"
     invokeAction che-incubator/kubernetes-image-puller "Create branch" "5409996" "branch=${BRANCH}"
 }
@@ -290,7 +291,8 @@ if [[ ${PHASES} == *"1"* ]]; then
     if [[ ${RELEASE_DWO_OPERATOR} ]]; then
         releaseDwoOperator
     fi
-    branchJWTProxyAndKIP
+    releaseDwoOperator
+    createBranches
     releaseCheServer
     releaseChe
 fi
