@@ -151,11 +151,7 @@ invokeAction() {
         # now we have a global value for $workflow_id
     fi
 
-    if [[ ${this_repo} == "che-incubator/kubernetes-image-puller" ]] || [[ ${this_repo} == "eclipse/che-jwtproxy" ]];then
-        WORKFLOW_MAIN_BRANCH="master"
-    else
-        WORKFLOW_MAIN_BRANCH="main"
-    fi
+    WORKFLOW_MAIN_BRANCH="main"
 
     if [[ ${this_repo} == "devfile/devworkspace-operator" ]];then
         WORKFLOW_BUGFIX_BRANCH=${DWO_BRANCH}
