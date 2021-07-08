@@ -26,7 +26,7 @@ on:
       phases:
         description: '
 # Comma-separated phases to perform: 
-#1: MachineExec, DevfileRegistry, Dashboard, DwoOperator, JWTProxyAndKIP; 
+#1: MachineExec, DevfileRegistry, Dashboard, DwoOperator, createBranches; 
 #2: CheServer; 
 #3: CheTheia; 
 #4: ChePluginRegistry;

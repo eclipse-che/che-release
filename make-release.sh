@@ -18,7 +18,7 @@ usage ()
   echo "Usage: $0  --version [CHE VERSION TO RELEASE] --dwo-version [DEVWORKSPACE OPERATOR VERSION TO RELEASE] --parent-version [CHE PARENT VERSION] --phases [LIST OF PHASES]
 
 Phases are comma-separated list, e.g. '1,2,3,4,5,6', where each phase has its associated projects:
-#1: MachineExec, CheTheia, DevfileRegistry, Dashboard, DwoOperator, JWTProxyAndKIP; 
+#1: MachineExec, CheTheia, DevfileRegistry, Dashboard, DwoOperator, createBranches; 
 #2: CheServer; 
 #3: CheTheia; 
 #4: ChePluginRegistry
