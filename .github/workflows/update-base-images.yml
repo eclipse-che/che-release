@@ -66,8 +66,10 @@ jobs:
           pushd /tmp >/dev/null || exit 1
           curl -sSLO https://raw.githubusercontent.com/redhat-developer/codeready-workspaces/crw-2-rhel-8/product/updateBaseImages.sh
           chmod +x updateBaseImages.sh
+          ls -l
           popd >/dev/null || exit 1
           git config --global user.name "Mykhailo Kuznietsov"
           git config --global user.email "mkuznets@redhat.com"
           echo running job for ${{ matrix.projects.repo }} 
+          ls -l
           ${{ matrix.projects.command }} 
