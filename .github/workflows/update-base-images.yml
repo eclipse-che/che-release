@@ -20,7 +20,7 @@ jobs:
     strategy: 
       matrix: 
         projects:
-          - { repo: "eclipse/che", user: "CHE_BOT_GITHUB_TOKEN", command: ""  }
+          - { repo: "eclipse/che", user: "CHE_BOT_GITHUB_TOKEN", command: "./updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr"  }
           - { repo: "eclipse-che/che-server", user: "CHE_BOT_GITHUB_TOKEN", command: "" }
           - { repo: "eclipse-che/che-machine-exec", user: "CHE_BOT_GITHUB_TOKEN", command: "" }
           - { repo: "eclipse-che/che-devfile-registry", user: "CHE_BOT_GITHUB_TOKEN", command: "" }
@@ -38,12 +38,12 @@ jobs:
         token: ${{ secrets.[matrix.projects.user] }}
         with:
           fetch-depth: 0
-      # - name: Login to registry.redhat.io 
-      #   uses: docker/login-action@v1
-      #   with:
-      #     registry: registry.redhat.io
-      #     username: ${{ secrets.CRW_BUILD_USER }}
-      #     password: ${{ secrets.CRW_BUILD_TOKEN }}
+      - name: Login to registry.redhat.io 
+        uses: docker/login-action@v1
+        with:
+          registry: registry.redhat.io
+          username: ${{ secrets.CRW_BUILD_USER }}
+          password: ${{ secrets.CRW_BUILD_TOKEN }}
       - name: Install skopeo + yq
         run: |
           checkVersion() {
