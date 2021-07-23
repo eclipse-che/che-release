@@ -21,15 +21,15 @@ jobs:
       fail-fast: false
       matrix: 
         projects:
-          - { repo: "eclipse/che", user: "CHE_BOT_GITHUB_TOKEN", command: "./tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr"  }
-          - { repo: "eclipse-che/che-server", user: "CHE_BOT_GITHUB_TOKEN", command: "./tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "eclipse-che/che-machine-exec", user: "CHE_BOT_GITHUB_TOKEN", command: "./tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "eclipse-che/che-devfile-registry", user: "CHE_BOT_GITHUB_TOKEN", command: "./tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "eclipse-che/che-plugin-registry", user: "CHE_BOT_GITHUB_TOKEN", command: "./tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "eclipse-che/che-theia", user: "CHE_BOT_GITHUB_TOKEN", command: "./tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "eclipse-che/che-dashboard", user: "CHE_BOT_GITHUB_TOKEN", command: "./tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "che-incubator/chectl", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "./tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "che-incubator/kubernetes-image-puller", user: "CHE_BOT_GITHUB_TOKEN", command: "./tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "eclipse/che", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr"  }
+          - { repo: "eclipse-che/che-server", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "eclipse-che/che-machine-exec", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "eclipse-che/che-devfile-registry", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "eclipse-che/che-plugin-registry", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "eclipse-che/che-theia", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "eclipse-che/che-dashboard", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "che-incubator/chectl", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "che-incubator/kubernetes-image-puller", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           
     steps:
       - name: "Checkout source code"
