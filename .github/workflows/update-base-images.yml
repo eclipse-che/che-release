@@ -1,15 +1,6 @@
 name: Update base images
 on:
-  workflow_dispatch:
-    inputs:
-      params:
-        description: 'Additional parameters to updateBaseImages.sh'
-        default: ''
-        required: false
-      branch:
-        description: 'Project branch'
-        default: 'main'
-        required: true
+  workflow_dispatch
   schedule:
   - cron: "0 0 * * 6"
 
@@ -26,10 +17,12 @@ jobs:
           - { repo: "eclipse-che/che-machine-exec", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-devfile-registry", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-plugin-registry", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "eclipse-che/che-theia", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "eclipse-che/che-theia", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 5 -f *[dD]ockerfile --pr" }
           - { repo: "eclipse-che/che-dashboard", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "eclipse-che/che-operator", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 1 -f *Dockerfile --pr" }
           - { repo: "che-incubator/chectl", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/kubernetes-image-puller", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "che-incubator/kubernetes-image-puller-operator", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           
     steps:
       - name: "Checkout source code"
@@ -71,4 +64,4 @@ jobs:
           git config --global user.name "Mykhailo Kuznietsov"
           git config --global user.email "mkuznets@redhat.com"
           echo running job for ${{ matrix.projects.repo }} 
-          ${{ matrix.projects.command }} 
+          ${{ matrix.projects.command }}
