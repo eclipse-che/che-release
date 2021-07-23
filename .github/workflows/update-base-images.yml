@@ -29,7 +29,7 @@ jobs:
           - { repo: "eclipse-che/che-theia", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-dashboard", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/chectl", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "che-incubator/kubernetes-image-puller", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "che-incubator/kubernetes-image-puller", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           
     steps:
       - name: "Checkout source code"
@@ -67,6 +67,7 @@ jobs:
           curl -sSLO https://raw.githubusercontent.com/redhat-developer/codeready-workspaces/crw-2-rhel-8/product/updateBaseImages.sh
           chmod +x updateBaseImages.sh
           popd >/dev/null || exit 1
+          export GITHUB_TOKEN=${{ secrets[matrix.projects.user] }}
           git config --global user.name "Mykhailo Kuznietsov"
           git config --global user.email "mkuznets@redhat.com"
           echo running job for ${{ matrix.projects.repo }} 
