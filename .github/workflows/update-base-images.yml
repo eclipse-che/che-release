@@ -14,11 +14,11 @@ jobs:
         projects:
           - { repo: "eclipse/che", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr"  }
           - { repo: "eclipse/che-jwtproxy", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr"  }
+          - { repo: "eclipse/che-plugin-broker", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b master -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-server", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-machine-exec", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-devfile-registry", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-plugin-registry", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "eclipse-che/che-plugin-broker", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b master -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-theia", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 5 -f *[dD]ockerfile --pr" }
           - { repo: "eclipse-che/che-dashboard", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-operator", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 1 -f *Dockerfile --pr" }
