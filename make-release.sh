@@ -176,7 +176,7 @@ invokeAction() {
         inputsJson=$(echo "${inputsJson}" | jq ". + {\"${key}\": \"${value}\"}")
     done
 
-    if [[ ${this_repo} == "che-incubator"* ]] || [[ ${this_repo} == "devfile"* ]]; then
+    if [[ ${this_repo} == "che-incubator"* ]] || [[ ${this_repo} == "devfile"* ]] || [[ ${this_repo} == "che-dockerfiles"* ]]; then
         this_github_token=${CHE_INCUBATOR_BOT_GITHUB_TOKEN}
     else
         this_github_token=${GITHUB_TOKEN}
@@ -205,6 +205,7 @@ createBranches() {
     invokeAction che-incubator/configbump "Create branch" "11029799" "branch=${BRANCH}"
     invokeAction eclipse/che-jwtproxy "Create branch" "5410230" "branch=${BRANCH}"
     invokeAction che-incubator/kubernetes-image-puller "Create branch" "5409996" "branch=${BRANCH}"
+    invokeAction che-dockerfiles/che-backup-server-rest  "Create branch" "11838866" "branch=${BRANCH}"
 }
 
 releaseDashboard() {
