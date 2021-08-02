@@ -205,6 +205,7 @@ createBranches() {
     invokeAction che-incubator/configbump "Create branch" "11029799" "branch=${BRANCH}"
     invokeAction eclipse/che-jwtproxy "Create branch" "5410230" "branch=${BRANCH}"
     invokeAction che-incubator/kubernetes-image-puller "Create branch" "5409996" "branch=${BRANCH}"
+    invokeAction che-dockerfiles/che-backup-server-rest  "Create branch" "11838866" "branch=${BRANCH}"
 }
 
 releaseDashboard() {
