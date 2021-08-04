@@ -40,8 +40,7 @@ With the exception of some projects, it allows to perform the bulk of the releas
 - [che-operator](https://github.com/eclipse-che/che-operator) - release artifacts is the [eclipse/che-operator](https://quay.io/repository/eclipse/che-operator?tab=tags) container image. Hovewer, the release has to completed manually, which will
 - [che-jwtproxy](https://github.com/eclipse/che-jwtproxy) - no actual release, only create a corresponding bugfix branch
 - [kubernetes-image-puller](https://github.com/che-incubator/kubernetes-image-puller) - no actual release, only create a corresponding bugfix branch
-- [devworkspace-operator](https://github.com/devfile/devworkspace-operator) - release artifact is the [devfile/devworkspace-controller](https://quay.io/repository/devfile/devworkspace-controller?tab=tags) container image
-- [devworkspace-che-operator](https://github.com/che-incubator/devworkspace-che-operator) - release artifact is the [che-incubator/devworkspace-controller](https://quay.io/repository/devfile/devworkspace-controller?tab=tags) container image
+- [devworkspace-che-operator](https://github.com/che-incubator/devworkspace-che-operator) - release artifact is the [che-incubator/devworkspace-che-operator](https://quay.io/repository/che-incubator/devworkspace-che-operator?tab=tags) container image
 - [che server](https://github.com/eclipse-che/che-server) - release artifacts are maven artifacts for Che server, as well as several container images:
     [quay.io/eclipse/che-endpoint-watcher](https://quay.io/repository/eclipse/che-endpoint-watcher?tab=tags),
     [quay.io/eclipse/che-keycloak](https://quay.io/repository/eclipse/che-keycloak?tab=tags),
@@ -60,10 +59,10 @@ In the case of Che Operator, as well as workflows that depend on it - chectl, ch
 At the moment, [Release - Orchestrate Overall Release Phases]((https://github.com/eclipse-che/che-release/actions?query=workflow%3A%22Release+-+Orchestrate+Overall+Release+Phases%22)) job has the way of ordering the release by utilizing the concept of phases.
 Currently there are several phases, representing an order of projects, which we can execute in parallel, as long as their dependent projects have been released. Projects in lower phases are those, on which projects from higher phase will depend.
 
-* Phase 1 - [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry), [che-machine-exec](https://github.com/eclipse-che/che-machine-exec), [che-jwt-proxy](https://github.com/eclipse/che-jwtproxy), [kubernetes-image-puller](https://github.com/che-incubator/kubernetes-image-puller), [devworkspace-operator](https://github.com/devfile/devworkspace-operator), [che-dashboard](https://github.com/eclipse-che/che-dashboard), [che-e2e](https://github.com/eclipse/che), [che-server](https://github.com/eclipse-che/che-server)
+* Phase 1 - [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry), [che-machine-exec](https://github.com/eclipse-che/che-machine-exec), [che-jwt-proxy](https://github.com/eclipse/che-jwtproxy), [kubernetes-image-puller](https://github.com/che-incubator/kubernetes-image-puller), [che-dashboard](https://github.com/eclipse-che/che-dashboard), [che-e2e](https://github.com/eclipse/che), [che-server](https://github.com/eclipse-che/che-server)
 * Phase 3 - [che-theia](https://github.com/eclipse-che/che-theia) - depends on [che-server](https://github.com/eclipse-che/che-server)
 * Phase 4 - [che-plugin-registry](https://github.com/eclipse-che/che-plugin-registry) - depends on [che-theia](https://github.com/eclipse-che/che-theia)
-* Phase 5 - [devworkspace-che-operator](https://github.com/che-incubator/devworkspace-che-operator) - depends on [devworkspace-operator](https://github.com/devfile/devworkspace-operator)
+* Phase 5 - [devworkspace-che-operator](https://github.com/che-incubator/devworkspace-che-operator)
 * Phase 6 - [che-operator](https://github.com/eclipse-che/che-operator) - depends on phases 1 to 5
 
 The phases list is a comma-separated list (default, which includes all phases "1,2,3,4,5,6"). Removing certain phases is useful, when you rerun the orchestration job, and certain projects shouldn't be released again. 

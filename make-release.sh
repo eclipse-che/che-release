@@ -18,7 +18,7 @@ usage ()
   echo "Usage: $0  --version [CHE VERSION TO RELEASE] --dwo-version [DEVWORKSPACE OPERATOR VERSION TO RELEASE] --parent-version [CHE PARENT VERSION] --phases [LIST OF PHASES]
 
 Phases are comma-separated list, e.g. '1,2,3,4,5,6', where each phase has its associated projects:
-#1: MachineExec, CheTheia, DevfileRegistry, Dashboard, DwoOperator, createBranches; 
+#1: MachineExec, CheTheia, DevfileRegistry, Dashboard, createBranches; 
 #2: CheServer; 
 #3: CheTheia; 
 #4: ChePluginRegistry
@@ -111,10 +111,6 @@ evaluateCheVariables() {
         RELEASE_CHE_PARENT="false"
     fi
 
-    if [[ ${RELEASE_DWO_OPERATOR} != "true" ]]; then
-        RELEASE_DWO_OPERATOR="false"
-    fi
-
     if [[ -z ${VERSION_CHE_PARENT} ]]; then
         # get latest higher 7.yy.z tag of Che Parent as version
         VERSION_CHE_PARENT=$(git -c 'versionsort.suffix=-' ls-remote --tags  https://github.com/eclipse/che-parent.git | cut --delimiter='/' --fields=3 | grep 7.* | sort --version-sort | tail --lines=1)
@@ -152,12 +148,7 @@ invokeAction() {
     fi
 
     WORKFLOW_MAIN_BRANCH="main"
-
-    if [[ ${this_repo} == "devfile/devworkspace-operator" ]];then
-        WORKFLOW_BUGFIX_BRANCH=${DWO_BRANCH}
-    else
-        WORKFLOW_BUGFIX_BRANCH=${BRANCH}
-    fi
+    WORKFLOW_BUGFIX_BRANCH=${BRANCH}
 
     if [[ ${CHE_VERSION} == *".0" ]]; then
         workflow_ref=${WORKFLOW_MAIN_BRANCH}
@@ -224,10 +215,6 @@ releaseCheOperator() {
     invokeAction eclipse-che/che-operator "Release Che Operator" "3593082" "version=${CHE_VERSION},dwoVersion=${DWO_VERSION},dwoCheVersion=v${CHE_VERSION}"
 }
 
-releaseDwoOperator() {
-    invokeAction devfile/devworkspace-operator "Release DevWorkspace Operator" "6380164" "version=${DWO_VERSION}"
-}
-
 releaseDwoCheOperator() {
     invokeAction che-incubator/devworkspace-che-operator "Release DevWorkspace Che Operator" "6597719" "version=v${CHE_VERSION},dwoVersion=${DWO_VERSION}"
 }
@@ -256,7 +243,6 @@ while [[ "$#" -gt 0 ]]; do
     '-p'|'--phases') PHASES="$2"; shift 1;;
     '--release-parent') RELEASE_CHE_PARENT="true"; shift 0;;
     '--parent-version') VERSION_CHE_PARENT="$2"; shift 1;;
-    '--release-dwo-operator') RELEASE_DWO_OPERATOR="true"; shift 0;;
   esac
   shift 1
 done
@@ -285,9 +271,6 @@ if [[ ${PHASES} == *"1"* ]]; then
     releaseMachineExec
     releaseDevfileRegistry
     releaseDashboard
-    if [[ ${RELEASE_DWO_OPERATOR} ]]; then
-        releaseDwoOperator
-    fi
     createBranches
     releaseCheServer
     releaseChe
