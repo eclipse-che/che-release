@@ -7,16 +7,8 @@ on:
         description: 'The version that is going to be released. Should be in format 7.y.z'
         required: true
         default: ''
-      dwoVersion:
-        description: 'The version of DevWorkspace operator. Should be in format v0.y.z'
-        required: true
-        default: ''
       releaseParent:
         description: 'If true, will also release Che Parent.'
-        required: false
-        default: 'false'
-      releaseDwoOperator:
-        description: 'If true, will also release DewWorkspace Operator.'
         required: false
         default: 'false'
       versionParent:
@@ -24,15 +16,17 @@ on:
         required: false
         default: '7.15.0'
       phases:
+        # TODO remove DwoCheOperator as of 7.35
         description: '
-# Comma-separated phases to perform: 
-#1: MachineExec, DevfileRegistry, Dashboard, DwoOperator, createBranches; 
-#2: CheServer; 
-#3: CheTheia; 
+# Comma-separated phases to perform.
+#1: MachineExec, DevfileRegistry, Dashboard, createBranches;
+#2: CheServer;
+#3: CheTheia;
 #4: ChePluginRegistry;
-#5: DwoCheOperator;  
-#6: CheOperator; 
-# Default: "1,2,3,4,5". Omit phases that have successfully run.
+#5: DwoCheOperator;
+#6: CheOperator;
+# Default: 1,2,3,4,5,6
+# Omit phases that have successfully run.
 '
         required: true
         default: '1,2,3,4,5'
@@ -111,15 +105,9 @@ jobs:
           CHE_VERSION="${{ github.event.inputs.version }}"
           echo "CHE_VERSION=${CHE_VERSION}"
 
-          DWO_VERSION="${{ github.event.inputs.dwoVersion }}"
-          # if user accidentally entered 0.y.z instead of v0.y.z, prefix with the required "v"
-          if [[ ${DWO_VERSION} != "v"* ]]; then DWO_VERSION="v${DWO_VERSION}"; fi
-          echo "DWO_VERSION=${DWO_VERSION}"
-
           PHASES="${{ github.event.inputs.phases }}"
           PARENT_VERSION="${{ github.event.inputs.versionParent }}"
           PARENT_RELEASE="${{ github.event.inputs.releaseParent }}"
-          RELEASE_DWO_OPERATOR="${{ github.event.inpust.releaseDwoOperator }}"
           export CHE_GITHUB_SSH_KEY=${{ secrets.CHE_GITHUB_SSH_KEY }}
 
           export QUAY_ECLIPSE_CHE_USERNAME=${{ secrets.QUAY_USERNAME }}
@@ -130,4 +118,4 @@ jobs:
           export CHE_BOT_GITHUB_TOKEN=${{ secrets.CHE_BOT_GITHUB_TOKEN }}
           export CHE_INCUBATOR_BOT_GITHUB_TOKEN=${{ secrets.CHE_INCUBATOR_BOT_GITHUB_TOKEN }}
           set -e
-          ./make-release.sh -v ${CHE_VERSION} -dv ${DWO_VERSION} -p ${PHASES} --parent-version ${PARENT_VERSION} --release-dwo-operator ${RELEASE_DWO_OPERATOR}
+          ./make-release.sh -v ${CHE_VERSION} -p ${PHASES} --parent-version ${PARENT_VERSION}
