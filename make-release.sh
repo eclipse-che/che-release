@@ -1,9 +1,8 @@
 #!/bin/bash
 
 # overall Che release orchestration script
-# see ../README.md for more info 
+# see README.md for more info 
 
-SCRIPT_DIR=$(cd "$(dirname "$0")" || exit; pwd)
 REGISTRY="quay.io"
 ORGANIZATION="eclipse"
 
@@ -15,17 +14,21 @@ die_with()
 
 usage ()
 {
-  echo "Usage: $0  --version [CHE VERSION TO RELEASE] --dwo-version [DEVWORKSPACE OPERATOR VERSION TO RELEASE] --parent-version [CHE PARENT VERSION] --phases [LIST OF PHASES]
 
-Phases are comma-separated list, e.g. '1,2,3,4,5,6', where each phase has its associated projects:
-#1: MachineExec, CheTheia, DevfileRegistry, Dashboard, createBranches; 
-#2: CheServer; 
-#3: CheTheia; 
-#4: ChePluginRegistry
-#5: DwoCheOperator; 
-#6: CheOperator; "
+  # TODO remove DwoCheOperator as of 7.35
+  echo "Usage: $0  --version [CHE VERSION TO RELEASE] --parent-version [CHE PARENT VERSION] --phases [LIST OF PHASES]
 
-  echo "Example: $0 --version 7.29.0 --dwo-version 0.3.0 --phases 1,2,3,4,5,6"; echo
+# Comma-separated phases to perform.
+#1: MachineExec, DevfileRegistry, Dashboard, createBranches;
+#2: CheServer;
+#3: CheTheia;
+#4: ChePluginRegistry;
+#5: DwoCheOperator;
+#6: CheOperator;
+# Default: 1,2,3,4,5,6
+# Omit phases that have successfully run.
+"
+  echo "Example: $0 --version 7.29.0 --phases 1,2,3,4,5,6"; echo
   exit 1
 }
 
@@ -72,7 +75,7 @@ verifyContainerExists()
     elif [[ $(echo "$result" | jq -r '.schemaVersion' || true) == "2" ]]; then
         arches=$(echo "$result" | jq -r '.manifests[].platform.architecture')
         if [[ $arches ]]; then
-            echo "[INFO] Found ${this_containerURL} (arches = "$arches")"
+            echo "[INFO] Found ${this_containerURL} (arches = $arches)"
         fi
         containerExists=1
     else
@@ -94,13 +97,6 @@ evaluateCheVariables() {
     BRANCH=${CHE_VERSION%.*}.x
     echo "Branch: ${BRANCH}"
 
-    # if user accidentally entered 0.y.z instead of v0.y.z, prefix with the required "v"
-    if [[ ${DWO_VERSION} != "v"* ]]; then DWO_VERSION="v${DWO_VERSION}"; fi
-
-    DWO_BRANCH=${DWO_VERSION#v}
-    DWO_BRANCH=${DWO_BRANCH%.*}.x
-    echo "DWO Branch: ${DWO_BRANCH}"
-
     if [[ ${CHE_VERSION} == *".0" ]]; then
         BASEBRANCH="master"
     else
@@ -113,6 +109,7 @@ evaluateCheVariables() {
 
     if [[ -z ${VERSION_CHE_PARENT} ]]; then
         # get latest higher 7.yy.z tag of Che Parent as version
+        # shellcheck disable=SC2062
         VERSION_CHE_PARENT=$(git -c 'versionsort.suffix=-' ls-remote --tags  https://github.com/eclipse/che-parent.git | cut --delimiter='/' --fields=3 | grep 7.* | sort --version-sort | tail --lines=1)
     fi
     echo "Basebranch: ${BASEBRANCH}" 
@@ -124,7 +121,7 @@ evaluateCheVariables() {
 computeWorkflowId() {
     this_repo=$1
     this_action_name=$2
-    workflow_id=$(curl -sSL https://api.github.com/repos/${this_repo}/actions/workflows -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3+json" | jq --arg search_field "${this_action_name}" '.workflows[] | select(.name == $search_field).id'); # echo "workflow_id = $workflow_id"
+    workflow_id=$(curl -sSL "https://api.github.com/repos/${this_repo}/actions/workflows" -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3+json" | jq --arg search_field "${this_action_name}" '.workflows[] | select(.name == $search_field).id'); # echo "workflow_id = $workflow_id"
     if [[ ! $workflow_id ]]; then
         die_with "[ERROR] Could not compute workflow id from https://api.github.com/repos/${this_repo}/actions/workflows - check your GITHUB_TOKEN is active"
     fi
@@ -140,6 +137,7 @@ invokeAction() {
     this_params=$4
 
     # if provided, use previously computed workflow_id; otherwise compute it from the action's name so we can invoke the GH action by id
+    # shellcheck disable=SC2086
     if [[ $this_workflow_id ]]; then
         workflow_id=$this_workflow_id
     else
@@ -163,7 +161,6 @@ invokeAction() {
     do 
         key=${keyvalue%=*}
         value=${keyvalue#*=}
-        echo $var1
         inputsJson=$(echo "${inputsJson}" | jq ". + {\"${key}\": \"${value}\"}")
     done
 
@@ -173,7 +170,7 @@ invokeAction() {
         this_github_token=${GITHUB_TOKEN}
     fi
 
-    curl -sSL https://api.github.com/repos/${this_repo}/actions/workflows/${workflow_id}/dispatches -X POST -H "Authorization: token ${this_github_token}" -H "Accept: application/vnd.github.v3+json" -d "{\"ref\":\"${workflow_ref}\",\"inputs\": ${inputsJson} }" || die_with "[ERROR] Problem invoking action https://github.com/${this_repo}/actions?query=workflow%3A%22${this_action_name// /+}%22"
+    curl -sSL "https://api.github.com/repos/${this_repo}/actions/workflows/${workflow_id}/dispatches" -X POST -H "Authorization: token ${this_github_token}" -H "Accept: application/vnd.github.v3+json" -d "{\"ref\":\"${workflow_ref}\",\"inputs\": ${inputsJson} }" || die_with "[ERROR] Problem invoking action https://github.com/${this_repo}/actions?query=workflow%3A%22${this_action_name// /+}%22"
     echo "[INFO] Invoked '${this_action_name}' action ($workflow_id) - see https://github.com/${this_repo}/actions?query=workflow%3A%22${this_action_name// /+}%22"
 }
 
@@ -212,11 +209,13 @@ releaseCheServer() {
 }
 
 releaseCheOperator() {
-    invokeAction eclipse-che/che-operator "Release Che Operator" "3593082" "version=${CHE_VERSION},dwoVersion=${DWO_VERSION},dwoCheVersion=v${CHE_VERSION}"
+    # TODO remove DwoCheOperator as of 7.35
+    invokeAction eclipse-che/che-operator "Release Che Operator" "3593082" "version=${CHE_VERSION},dwoCheVersion=v${CHE_VERSION}"
 }
 
 releaseDwoCheOperator() {
-    invokeAction che-incubator/devworkspace-che-operator "Release DevWorkspace Che Operator" "6597719" "version=v${CHE_VERSION},dwoVersion=${DWO_VERSION}"
+    # TODO remove DwoCheOperator as of 7.35 - see https://github.com/che-incubator/devworkspace-che-operator/pull/65
+    invokeAction che-incubator/devworkspace-che-operator "Release DevWorkspace Che Operator" "6597719" "version=v${CHE_VERSION},dwoVersion=v0.8.0"
 }
 
 # TODO change it to someone else?
@@ -239,7 +238,6 @@ setupGitconfig() {
 while [[ "$#" -gt 0 ]]; do
   case $1 in
     '-v'|'--version') CHE_VERSION="$2"; shift 1;;
-    '-dv'|'--dwo-version') DWO_VERSION="$2"; shift 1;;
     '-p'|'--phases') PHASES="$2"; shift 1;;
     '--release-parent') RELEASE_CHE_PARENT="true"; shift 0;;
     '--parent-version') VERSION_CHE_PARENT="$2"; shift 1;;
@@ -247,14 +245,14 @@ while [[ "$#" -gt 0 ]]; do
   shift 1
 done
 
-if [[ ! ${CHE_VERSION} ]] || [[ ! ${DWO_VERSION} ]] || [[ ! ${PHASES} ]] ; then
+if [[ ! ${CHE_VERSION} ]] || [[ ! ${PHASES} ]] ; then
   usage
 fi
 
 set +x
-mkdir $HOME/.ssh/
-echo $CHE_GITHUB_SSH_KEY | base64 -d > $HOME/.ssh/id_rsa
-chmod 0400 $HOME/.ssh/id_rsa
+mkdir "$HOME/.ssh/"
+echo "$CHE_GITHUB_SSH_KEY" | base64 -d > "$HOME/.ssh/id_rsa"
+chmod 0400 "$HOME/.ssh/id_rsa"
 ssh-keyscan github.com >> ~/.ssh/known_hosts
 set -x
 
@@ -276,11 +274,12 @@ if [[ ${PHASES} == *"1"* ]]; then
     releaseChe
 fi
 wait
+# shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-machine-exec:${CHE_VERSION} 60
+# shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-devfile-registry:${CHE_VERSION} 60
+# shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-dashboard:${CHE_VERSION} 60
-# https://quay.io/repository/devfile/devworkspace-controller?tab=tags
-verifyContainerExistsWithTimeout ${REGISTRY}/devfile/devworkspace-controller:${DWO_VERSION} 60
 
 IMAGES_LIST=(
     quay.io/eclipse/che-endpoint-watcher
@@ -292,7 +291,7 @@ IMAGES_LIST=(
 )
 
 for image in "${IMAGES_LIST[@]}"; do
-    verifyContainerExistsWithTimeout ${image}:${CHE_VERSION} 60
+    verifyContainerExistsWithTimeout "${image}:${CHE_VERSION}" 60
 done
 
 set +x
@@ -301,6 +300,7 @@ if [[ ${PHASES} == *"2"* ]]; then
     releaseCheTheia
 fi
 
+# shellcheck disable=SC2086
 if [[ ${PHASES} == *"2"* ]] || [[ ${PHASES} == *"5"* ]]; then
   verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-theia:${CHE_VERSION} 60
   verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-theia-dev:${CHE_VERSION} 60
@@ -312,17 +312,19 @@ if [[ ${PHASES} == *"3"* ]]; then
     releasePluginRegistry
 fi
 
+# shellcheck disable=SC2086
 if [[ ${PHASES} == *"3"* ]] || [[ ${PHASES} == *"5"* ]]; then
   verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-plugin-registry:${CHE_VERSION} 30
 fi
 
+# TODO remove DwoCheOperator as of 7.35
 # Release devworkspace che operator (depends on devworkspace-operator)
-# TODO this will go away when it's part of che-operator
 if [[ ${PHASES} == *"4"* ]]; then
     releaseDwoCheOperator
 fi
 
-# TODO this will go away when it's part of che-operator
+# TODO remove DwoCheOperator as of 7.35
+# shellcheck disable=SC2086
 if [[ ${PHASES} == *"4"* ]] || [[ ${PHASES} == *"5"* ]]; then
     # https://quay.io/repository/che-incubator/devworkspace-che-operator?tab=tags
     verifyContainerExistsWithTimeout ${REGISTRY}/che-incubator/devworkspace-che-operator:v${CHE_VERSION} 30
@@ -336,4 +338,4 @@ fi
 wait
 
 # downstream steps depends on Che operator PRs being merged by humans, so this is the end of the automation.
-# see ../README.md for more info
+# see README.md for more info
