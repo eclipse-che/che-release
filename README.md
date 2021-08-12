@@ -60,12 +60,12 @@ At the moment, [Release - Orchestrate Overall Release Phases]((https://github.co
 Currently there are several phases, representing an order of projects, which we can execute in parallel, as long as their dependent projects have been released. Projects in lower phases are those, on which projects from higher phase will depend.
 
 * Phase 1 - [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry), [che-machine-exec](https://github.com/eclipse-che/che-machine-exec), [che-jwt-proxy](https://github.com/eclipse/che-jwtproxy), [kubernetes-image-puller](https://github.com/che-incubator/kubernetes-image-puller), [che-dashboard](https://github.com/eclipse-che/che-dashboard), [che-e2e](https://github.com/eclipse/che), [che-server](https://github.com/eclipse-che/che-server)
-* Phase 3 - [che-theia](https://github.com/eclipse-che/che-theia) - depends on [che-server](https://github.com/eclipse-che/che-server)
-* Phase 4 - [che-plugin-registry](https://github.com/eclipse-che/che-plugin-registry) - depends on [che-theia](https://github.com/eclipse-che/che-theia)
-* Phase 5 - [devworkspace-che-operator](https://github.com/che-incubator/devworkspace-che-operator)
-* Phase 6 - [che-operator](https://github.com/eclipse-che/che-operator) - depends on phases 1 to 5
+* Phase 2 - [che-theia](https://github.com/eclipse-che/che-theia) - depends on [che-server](https://github.com/eclipse-che/che-server)
+* Phase 3 - [che-plugin-registry](https://github.com/eclipse-che/che-plugin-registry) - depends on [che-theia](https://github.com/eclipse-che/che-theia)
+* Phase 4 - [devworkspace-che-operator](https://github.com/che-incubator/devworkspace-che-operator)
+* Phase 5 - [che-operator](https://github.com/eclipse-che/che-operator) - depends on phases 1 to 4
 
-The phases list is a comma-separated list (default, which includes all phases "1,2,3,4,5,6"). Removing certain phases is useful, when you rerun the orchestration job, and certain projects shouldn't be released again. 
+The phases list is a comma-separated list (default, which includes all phases "1,2,3,4,5"). Removing certain phases is useful, when you rerun the orchestration job, and certain projects shouldn't be released again. 
 Note that this approach will change, once a new system will be implemented, where we can more clearly specify dependencies between workflows, using special types of GitHub action.
 
 

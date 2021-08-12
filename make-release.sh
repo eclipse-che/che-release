@@ -19,16 +19,15 @@ usage ()
   echo "Usage: $0  --version [CHE VERSION TO RELEASE] --parent-version [CHE PARENT VERSION] --phases [LIST OF PHASES]
 
 # Comma-separated phases to perform.
-#1: MachineExec, DevfileRegistry, Dashboard, createBranches;
-#2: CheServer;
-#3: CheTheia;
-#4: ChePluginRegistry;
-#5: DwoCheOperator;
-#6: CheOperator;
-# Default: 1,2,3,4,5,6
+#1: CheServer, MachineExec, DevfileRegistry, Dashboard, createBranches;
+#2: CheTheia;
+#3: ChePluginRegistry;
+#4: DwoCheOperator;
+#5: CheOperator;
+# Default: 1,2,3,4,5
 # Omit phases that have successfully run.
 "
-  echo "Example: $0 --version 7.29.0 --phases 1,2,3,4,5,6"; echo
+  echo "Example: $0 --version 7.29.0 --phases 1,2,3,4,5"; echo
   exit 1
 }
 
