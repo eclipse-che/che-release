@@ -205,7 +205,7 @@ releaseCheServer() {
 }
 
 releaseCheOperator() {
-    invokeAction eclipse-che/che-operator "Release Che Operator" "3593082" "version=${CHE_VERSION}"
+    invokeAction eclipse-che/che-operator "Release Che Operator" "3593082" "version=${CHE_VERSION},dwoVersion=${DWO_VERSION}"
 }
 
 # TODO change it to someone else?
@@ -275,7 +275,6 @@ IMAGES_LIST=(
     quay.io/eclipse/che-endpoint-watcher
     quay.io/eclipse/che-keycloak
     quay.io/eclipse/che-postgres
-    quay.io/eclipse/che-dev
     quay.io/eclipse/che-server
     quay.io/eclipse/che-e2e
 )
