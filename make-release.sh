@@ -22,12 +22,11 @@ usage ()
 #1: CheServer, MachineExec, DevfileRegistry, Dashboard, createBranches;
 #2: CheTheia;
 #3: ChePluginRegistry;
-#4: DwoCheOperator;
 #5: CheOperator;
-# Default: 1,2,3,4,5
+# Default: 1,2,3,4
 # Omit phases that have successfully run.
 "
-  echo "Example: $0 --version 7.29.0 --phases 1,2,3,4,5"; echo
+  echo "Example: $0 --version 7.29.0 --phases 1,2,3,4"; echo
   exit 1
 }
 
@@ -212,11 +211,6 @@ releaseCheOperator() {
     invokeAction eclipse-che/che-operator "Release Che Operator" "3593082" "version=${CHE_VERSION},dwoCheVersion=v${CHE_VERSION}"
 }
 
-releaseDwoCheOperator() {
-    # TODO remove DwoCheOperator as of 7.35 - see https://github.com/che-incubator/devworkspace-che-operator/pull/65
-    invokeAction che-incubator/devworkspace-che-operator "Release DevWorkspace Che Operator" "6597719" "version=v${CHE_VERSION},dwoVersion=v0.8.0"
-}
-
 # TODO change it to someone else?
 # TODO use a different token?
 setupGitconfig() {
@@ -316,22 +310,9 @@ if [[ ${PHASES} == *"3"* ]] || [[ ${PHASES} == *"5"* ]]; then
   verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-plugin-registry:${CHE_VERSION} 30
 fi
 
-# TODO remove DwoCheOperator as of 7.35
-# Release devworkspace che operator (depends on devworkspace-operator)
-if [[ ${PHASES} == *"4"* ]]; then
-    releaseDwoCheOperator
-fi
-
-# TODO remove DwoCheOperator as of 7.35
-# shellcheck disable=SC2086
-if [[ ${PHASES} == *"4"* ]] || [[ ${PHASES} == *"5"* ]]; then
-    # https://quay.io/repository/che-incubator/devworkspace-che-operator?tab=tags
-    verifyContainerExistsWithTimeout ${REGISTRY}/che-incubator/devworkspace-che-operator:v${CHE_VERSION} 30
-fi
-
 # Release Che operator (create PRs)
 set +x
-if [[ ${PHASES} == *"5"* ]]; then
+if [[ ${PHASES} == *"4"* ]]; then
     releaseCheOperator
 fi
 wait
