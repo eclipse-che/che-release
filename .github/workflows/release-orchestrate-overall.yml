@@ -20,10 +20,9 @@ on:
         required: false
         default: '7.15.0'
       phases:
-        # TODO remove DwoCheOperator as of 7.35
         description: '
 # Comma-separated phases to perform.
-#1: CheServer, MachineExec, DevfileRegistry, Dashboard, createBranches;
+#1: MachineExec, DevfileRegistry, Dashboard, CheServer, CheE2E, branches
 #2: CheTheia;
 #3: ChePluginRegistry;
 #4: CheOperator;
