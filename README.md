@@ -29,28 +29,34 @@ GitHub Actions release workflows can be run by any user with write access to the
 ## Projects overview
 Most of the projects that are part of the weekly release cycle are also united in this project's workflow - the [Release - Orchestrate Overall Release Phases](https://github.com/eclipse-che/che-release/actions?query=workflow%3A%22Release+-+Orchestrate+Overall+Release+Phases%22), which runs the [make-release.sh](https://github.com/eclipse-che/che-release/blob/main/make-release.sh) release script.
 
-With the exception of some projects, it allows to perform the bulk of the release process with 1 click, running following projects in the correct order, making them complete a full release process - pushing commits or pull request to respective repositories, deploying artifacts etc. The projects that are covered by this workflow are:
+With the exception of some projects, it allows to perform the bulk of the release process with 1 click, running following projects in the correct order, making them complete a full release process - pushing commits or pull request to respective repositories, deploying artifacts etc. 
 
-- [che-e2e](https://github.com/eclipse/che) - release artifacts are [eclipse/che-e2e](https://quay.io/repository/eclipse/che-e2e?tab=tags) container images
-- [che-machine-exec](https://github.com/eclipse-che/che-machine-exec) - release artifacts are [eclipse/che-machine-exec](https://quay.io/repository/eclipse/che-machine-exec?tab=tags) container images
-- [che-theia](https://github.com/eclipse-che/che-theia) - release artifacts are several container images 
-  - [theia-dev](https://quay.io/repository/eclipse/che-theia-dev?tab=tags), 
-  - [che-theia](https://quay.io/repository/eclipse-che/che-theia?tab=tags), 
-  - [che-theia-endpoint-runtime-binary](https://quay.io/repository/eclipse/che-theia-endpoint-runtime-binary?tab=tags),
-  - [che-theia-vsix-installer](https://quay.io/repository/eclipse/che-theia-vsix-installer?tab=tags)
-- [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry) - release artifacts are [eclipse/che-devfile-registry](https://quay.io/repository/eclipse/che-devfile-registry?tab=tags) container image
-- [che-plugin-registry](https://github.com/eclipse-che/che-plugin-registry) - release artifacts are [eclipse/che-plugin-registry](https://quay.io/repository/eclipse/che-plugin-registry?tab=tags) container image
-- [che-dashboard](https://github.com/eclipse-che/che-dashboard) - release artifacts are [eclipse/che-dashboard](https://quay.io/repository/eclipse/che-dashboard?tab=tags) container images
-- [che-operator](https://github.com/eclipse-che/che-operator) - release artifacts are [eclipse/che-operator](https://quay.io/repository/eclipse/che-operator?tab=tags) container images. Hovewer, the release has to completed manually, which will
-- [che-jwtproxy](https://github.com/eclipse/che-jwtproxy) - no actual release, only create a corresponding bugfix branch
-- [kubernetes-image-puller](https://github.com/che-incubator/kubernetes-image-puller) - no actual release, only create a corresponding bugfix branch
-- [che server](https://github.com/eclipse-che/che-server) - release artifacts are container images:
-  - [quay.io/eclipse/che-endpoint-watcher](https://quay.io/repository/eclipse/che-endpoint-watcher?tab=tags),
-  - [quay.io/eclipse/che-keycloak](https://quay.io/repository/eclipse/che-keycloak?tab=tags),
-  - [quay.io/eclipse/che-postgres](https://quay.io/repository/eclipse/che-postgres?tab=tags),
-  - [quay.io/eclipse/che-server](https://quay.io/repository/eclipse/che-server?tab=tags)
+The projects that are covered by this workflow release container images:
 
-In the case of Che Operator, as well as workflows that depend on it - chectl, che-docs and community-operator PR generation. This is due to performing manual verifications in Che Operator by the Deploy team (and also various tests run against running Che, so we have a chance to see if it functions). When everything has been verified, after the merging of operator PRs the following projects workflows will be triggered automatically.
+- [che-e2e](https://github.com/eclipse/che) - https://quay.io/eclipse/che-e2e
+- [che-machine-exec](https://github.com/eclipse-che/che-machine-exec) - https://quay.io/eclipse/che-machine-exec
+- [che-theia](https://github.com/eclipse-che/che-theia) - 
+  - https://quay.io/eclipse/che-theia-dev, 
+  - https://quay.io/eclipse-che/che-theia, 
+  - https://quay.io/eclipse/che-theia-endpoint-runtime-binary,
+  - https://quay.io/eclipse/che-theia-vsix-installer
+- [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry) - https://quay.io/eclipse/che-devfile-registry
+- [che-plugin-registry](https://github.com/eclipse-che/che-plugin-registry) - https://quay.io/eclipse/che-plugin-registry
+- [che-dashboard](https://github.com/eclipse-che/che-dashboard) - https://quay.io/eclipse/che-dashboard
+- [che-operator](https://github.com/eclipse-che/che-operator) - https://quay.io/eclipse/che-operator. 
+- [che server](https://github.com/eclipse-che/che-server) - 
+  - https://quay.io/eclipse/che-endpoint-watcher,
+  - https://quay.io/eclipse/che-keycloak,
+  - https://quay.io/eclipse/che-postgres,
+  - https://quay.io/eclipse/che-server
+
+Additionally, these slower-moving projects perform branch creation every sprint:
+- [configbump](https://github.com/che-incubator/configbump)
+- [che-jwtproxy](https://github.com/eclipse/che-jwtproxy)
+- [kubernetes-image-puller](https://github.com/che-incubator/kubernetes-image-puller)
+- [che-backup-server-rest](https://github.com/che-dockerfiles/che-backup-server-rest)
+
+Che Operator requires manual verifications by Deploy team (and also various tests run against running Che, so we have a chance to see if it functions). When everything has been verified, after the merging of operator PRs the following projects workflows will be triggered automatically.
 - [chectl](https://github.com/che-incubator/chectl) - release artifact is a set of binaries, published to [Releases page]https://github.com/che-incubator/chectl/releases 
 - [che-docs](https://github.com/eclipse/che-docs) - only create tag and pull request to update to latest released version of Che
 - [community-operator](https://github.com/operator-framework/community-operators/) - [create pull requests](https://github.com/operator-framework/community-operators/pulls?q=%22Update+eclipse-che+operator%22+is%3Aopen) to update to latest released version of Che in OperatorHub
