@@ -107,6 +107,9 @@ jobs:
           CHE_VERSION="${{ github.event.inputs.version }}"
           echo "CHE_VERSION=${CHE_VERSION}"
 
+          DWO_VERSION="${{ github.event.inputs.dwoVersion }}"
+          echo "DWO_VERSION=${DWO_VERSION}"
+          
           PHASES="${{ github.event.inputs.phases }}"
           PARENT_VERSION="${{ github.event.inputs.versionParent }}"
           PARENT_RELEASE="${{ github.event.inputs.releaseParent }}"

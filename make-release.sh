@@ -89,6 +89,7 @@ installDebDeps(){
 
 evaluateCheVariables() {
     echo "Che version: ${CHE_VERSION}"
+    echo "DWO version: ${CHE_VERSION}"
     # derive branch from version
     BRANCH=${CHE_VERSION%.*}.x
     echo "Branch: ${BRANCH}"
@@ -229,6 +230,7 @@ while [[ "$#" -gt 0 ]]; do
   case $1 in
     '-v'|'--version') CHE_VERSION="$2"; shift 1;;
     '-p'|'--phases') PHASES="$2"; shift 1;;
+    '-dv'|'--dwo-version') DWO_VERSION;"$2"; shift 1;;
     '--release-parent') RELEASE_CHE_PARENT="true"; shift 0;;
     '--parent-version') VERSION_CHE_PARENT="$2"; shift 1;;
   esac
