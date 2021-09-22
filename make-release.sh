@@ -197,8 +197,8 @@ releaseDashboard() {
     invokeAction eclipse-che/che-dashboard "Release Che Dashboard" "3152474" "version=${CHE_VERSION}"
 }
 
-releaseChe() {
-    invokeAction eclipse/che "Release Che" "5536792" "version=${CHE_VERSION}"
+releaseCheE2E() {
+    invokeAction eclipse/che "Release Che E2E" "5536792" "version=${CHE_VERSION}"
 }
 
 releaseCheServer() {
@@ -263,7 +263,7 @@ if [[ ${PHASES} == *"1"* ]]; then
     releaseDashboard
     createBranches
     releaseCheServer
-    releaseChe
+    releaseCheE2E
 fi
 wait
 # shellcheck disable=SC2086
