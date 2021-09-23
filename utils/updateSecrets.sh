@@ -29,11 +29,12 @@ QUAY_PASSWORD my-quay-password
 ...
 
 Usage:   $0 -r [LIST OF REPOS FILE] -s [SECRETS FILE]
-Example: $0 -r updateSecrets.txt -s /path/to/all-my-secrets.txt
+Example: $0 -r updateSecrets.txt -s /path/to/all-my-secrets.txt --list-secrets --update-secrets
 
 Options: 
 	-v               verbose output
-	--dry-run        display planned changes but do not actually push new/updated secrets
+	--list-secrets   before doing any changes, list the current secrets in the repo(s)
+	--update-secrets rather than displaying planned changes, DO actually push new/updated secrets
 	--help, -h       help
 "
 exit
@@ -43,7 +44,8 @@ if [[ $# -lt 1 ]]; then usage; exit; fi
 
 #defaults
 WORKDIR=$(pwd)
-UPDATE_SECRETS=1
+LIST_SECRETS=0
+UPDATE_SECRETS=0
 REPOSFILE="updateSecrets.txt"
 
 while [[ "$#" -gt 0 ]]; do
@@ -52,12 +54,17 @@ while [[ "$#" -gt 0 ]]; do
     '-r') REPOSFILE="$2"; shift 1;;
     '-s') SECRETSFILE="$2"; shift 1;;
     '-v') VERBOSE=1; shift 0;;
-	'--dry-run') UPDATE_SECRETS=0; shift 0;;
+    '--update-secrets') UPDATE_SECRETS=1;;
+    '--list-secrets') LIST_SECRETS=1;;
     '--help'|'-h') usage;;
-    *) OTHER="${OTHER} $1"; shift 0;; 
+    *) OTHER="${OTHER} $1";; 
   esac
   shift 1
 done
+
+if [[ $UPDATE_SECRETS -eq 0 ]] && [[ $LIST_SECRETS -eq 0 ]]; then
+    echo "Error: must specify --list-secrets or --update-secrets (or both)"; usage
+fi
 
 # check for valid files
 if [[ ! "$SECRETSFILE" ]]; then echo "Error: Secrets file not set."; usage; fi
@@ -101,12 +108,13 @@ else
 fi
 
 for repo in $REPOS; do
-    if [[ ${UPDATE_SECRETS} -eq 1 ]]; then
-        # by default, just list the current secrets, but don't change anything; comment out this line when ready to make changes!
+    if [[ ${LIST_SECRETS} -eq 1 ]]; then
+        # list the current secrets, but don't change anything
         /tmp/github-secrets-generator/run.sh -r ${repo} --list
+    fi
 
-        # uncomment this line when you're REALLY sure you want to change the secrets!
-        # /tmp/github-secrets-generator/run.sh -r ${repo} -f "${SECRETSFILE}"
+    if [[ ${UPDATE_SECRETS} -eq 1 ]]; then
+        /tmp/github-secrets-generator/run.sh -r ${repo} -f "${SECRETSFILE}"
     else
         echo "/tmp/github-secrets-generator/run.sh -r ${repo} -f ${SECRETSFILE}"
     fi
