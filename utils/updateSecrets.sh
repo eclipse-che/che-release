@@ -73,10 +73,11 @@ if [[ ! "$REPOSFILE" ]]; then echo "Error: Repos file not set."; usage; fi
 if [[ ! -r "$REPOSFILE" ]] && [[ ! -r "${WORKDIR}/${REPOSFILE}" ]]; then 
     echo "Error: Invalid repos file ${REPOSFILE}."; usage
 else
+    # exclude commented out lines in the repos file
     if [[ -r "$REPOSFILE" ]]; then
-        REPOS=$(cat "$REPOSFILE")
+        REPOS=$(cat "$REPOSFILE" | grep -v -E "^#")
     elif [[ -r "${WORKDIR}/$REPOSFILE" ]]; then
-        REPOS=$(cat "${WORKDIR}/$REPOSFILE")
+        REPOS=$(cat "${WORKDIR}/$REPOSFILE" | grep -v -E "^#")
     fi
 fi
 
@@ -99,12 +100,15 @@ else
     fi
 fi
 
-cd /tmp/github-secrets-generator
 for repo in $REPOS; do
     if [[ ${UPDATE_SECRETS} -eq 1 ]]; then
-        ./run.sh -r ${repo} --list # -f "${SECRETSFILE}"
+        # by default, just list the current secrets, but don't change anything; comment out this line when ready to make changes!
+        /tmp/github-secrets-generator/run.sh -r ${repo} --list
+
+        # uncomment this line when you're REALLY sure you want to change the secrets!
+        # /tmp/github-secrets-generator/run.sh -r ${repo} -f "${SECRETSFILE}"
     else
-        echo "run.sh -r ${repo} -f ${SECRETSFILE}"
+        echo "/tmp/github-secrets-generator/run.sh -r ${repo} -f ${SECRETSFILE}"
     fi
 done
 
