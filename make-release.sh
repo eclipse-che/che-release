@@ -89,7 +89,6 @@ installDebDeps(){
 
 evaluateCheVariables() {
     echo "Che version: ${CHE_VERSION}"
-    echo "DWO version: ${CHE_VERSION}"
     # derive branch from version
     BRANCH=${CHE_VERSION%.*}.x
     echo "Branch: ${BRANCH}"
@@ -206,7 +205,7 @@ releaseCheServer() {
 }
 
 releaseCheOperator() {
-    invokeAction eclipse-che/che-operator "Release Che Operator" "3593082" "version=${CHE_VERSION},dwoVersion=${DWO_VERSION}"
+    invokeAction eclipse-che/che-operator "Release Che Operator" "3593082" "version=${CHE_VERSION}"
 }
 
 # TODO change it to someone else?
@@ -230,7 +229,6 @@ while [[ "$#" -gt 0 ]]; do
   case $1 in
     '-v'|'--version') CHE_VERSION="$2"; shift 1;;
     '-p'|'--phases') PHASES="$2"; shift 1;;
-    '-dv'|'--dwo-version') DWO_VERSION;"$2"; shift 1;;
     '--release-parent') RELEASE_CHE_PARENT="true"; shift 0;;
     '--parent-version') VERSION_CHE_PARENT="$2"; shift 1;;
   esac

@@ -7,10 +7,6 @@ on:
         description: 'The version that is going to be released. Should be in format 7.y.z'
         required: true
         default: ''
-      dwoVersion:
-        description: 'The version of DevWorkspace operator. Should be in format v0.y.z'
-        required: true
-        default: ''
       releaseParent:
         description: 'If true, will also release Che Parent.'
         required: false
@@ -105,10 +101,6 @@ jobs:
         run: |
           CHE_VERSION="${{ github.event.inputs.version }}"
           echo "CHE_VERSION=${CHE_VERSION}"
-
-          DWO_VERSION="${{ github.event.inputs.dwoVersion }}"
-          echo "DWO_VERSION=${DWO_VERSION}"
-
           PHASES="${{ github.event.inputs.phases }}"
           PARENT_VERSION="${{ github.event.inputs.versionParent }}"
           PARENT_RELEASE="${{ github.event.inputs.releaseParent }}"
@@ -122,4 +114,4 @@ jobs:
           export CHE_BOT_GITHUB_TOKEN=${{ secrets.CHE_BOT_GITHUB_TOKEN }}
           export CHE_INCUBATOR_BOT_GITHUB_TOKEN=${{ secrets.CHE_INCUBATOR_BOT_GITHUB_TOKEN }}
           set -e
-          ./make-release.sh -v ${CHE_VERSION} -dv ${DWO_VERSION} -p ${PHASES} --parent-version ${PARENT_VERSION}
+          ./make-release.sh -v ${CHE_VERSION} -p ${PHASES} --parent-version ${PARENT_VERSION}
