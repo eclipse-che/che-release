@@ -1,24 +1,19 @@
 # This Workflow announces a release in Eclipse Mattermost to https://mattermost.eclipse.org/eclipse/channels/eclipse-che-releases
 name: Release - Send mattermost notification
+
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'The version that is going to be announced. Should be in format 7.y.z'
-        required: true
-        default: ''
+  push:
+    branches:
+      - main
+      - '7.[0-9]+.[0-9]+'
+    paths:
+      - 'assembly/assembly-wsmaster-war/src/main/webapp/WEB-INF/classes/che_aliases.properties'
+      - 'assembly/assembly-wsmaster-war/src/main/webapp/WEB-INF/classes/che/che.properties'
+      - 'assembly/assembly-wsmaster-war/src/main/webapp/WEB-INF/classes/che/multiuser.properties'
 jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
-    - name: Create message
+    - name: step 1
       run: |
-        milestone=${{ github.event.inputs.version }}
-        milestone=${milestone%.*}; echo "milestone: ${milestone}"
-        echo "{\"text\":\":che-logo: Che ${{ github.event.inputs.version }} has been released.\n\n Please resolve or move unresolved issues assigned to this milestone: https://github.com/eclipse/che/milestones/${milestone}\"}" > mattermost.json
-    - name: Send message
-      uses: mattermost/action-mattermost-notify@1.1.0
-      env:
-        MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
-        MATTERMOST_CHANNEL: eclipse-che-releases
-        MATTERMOST_USERNAME: che-bot
+        echo ${GITUHB_REF}
