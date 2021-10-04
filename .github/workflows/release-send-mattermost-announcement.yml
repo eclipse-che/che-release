@@ -2,12 +2,13 @@
 name: Release - Send mattermost notification
 
 on:
+  workflow_dispatch:
+    inputs: {}
   push:
     branches:
       - main
       - '7.[0-9]+.[0-9]+'
     paths:
-      - 'assembly/assembly-wsmaster-war/src/main/webapp/WEB-INF/classes/che_aliases.properties'
       - 'assembly/assembly-wsmaster-war/src/main/webapp/WEB-INF/classes/che/che.properties'
       - 'assembly/assembly-wsmaster-war/src/main/webapp/WEB-INF/classes/che/multiuser.properties'
 jobs:
