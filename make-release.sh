@@ -28,6 +28,33 @@ usage ()
   exit 1
 }
 
+checkForBlockerIssues()
+{
+    cd /tmp
+    git clone --depth=1  https://github.com/eclipse/che tmp-che && cd tmp-che
+
+    # install gh cli from https://github.com/cli/cli/releases/
+    sudo dpkg -i https://github.com/cli/cli/releases/download/v2.2.0/gh_2.2.0_linux_amd64.deb
+
+    # find blockers for a given milestone
+    BLOCKERS_THIS_MILESTONE="$(gh issue list -l "severity/blocker" -s "open" -m "${CHE_VERSION%.*}" --json "createdAt,updatedAt,author,title,url,milestone")"
+
+    # find any blockers, including those unassigned to milestones
+    BLOCKERS_ANY="$(gh issue list -l "severity/blocker" -s "open" --json "createdAt,updatedAt,author,title,url,milestone")"
+
+    rm -fr /tmp/tmp-che
+
+    if [[ $BLOCKERS_THIS_MILESTONE != "[]" ]]; then
+        echo "[ERROR] Blocker issue(s) found for this milestone ${CHE_VERSION%.*}!"
+        echo $BLOCKERS_THIS_MILESTONE | jq -r '.[]'
+        exit 1
+    fi
+    if [[ $BLOCKERS_ANY != "[]" ]]; then
+        echo "[WARNING] Blocker issue(s) found!"
+        echo $BLOCKERS_ANY | jq -r '.[]'
+    fi
+}
+
 verifyContainerExistsWithTimeout()
 {
     this_containerURL=$1
@@ -247,6 +274,7 @@ ssh-keyscan github.com >> ~/.ssh/known_hosts
 set -x
 
 installDebDeps
+checkForBlockerIssues
 setupGitconfig
 
 evaluateCheVariables
