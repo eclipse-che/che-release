@@ -30,24 +30,27 @@ usage ()
 
 checkForBlockerIssues()
 {
-    # install gh cli from https://github.com/cli/cli/releases/
-    sudo dpkg -i https://github.com/cli/cli/releases/download/v2.2.0/gh_2.2.0_linux_amd64.deb
+    # check for blockers only if doing a 7.yy.0 release
+    if [[ ${CHE_VERSION} == *".0" ]]; then 
+        # install gh cli from https://github.com/cli/cli/releases/
+        sudo dpkg -i https://github.com/cli/cli/releases/download/v2.2.0/gh_2.2.0_linux_amd64.deb
 
-    # find blockers for a given milestone
-    # BLOCKERS_THIS_MILESTONE="$(gh issue list -R eclipse/che -l "severity/blocker" -s "open" -m "${CHE_VERSION%.*}" --json "createdAt,updatedAt,author,title,url,milestone" | jq -r '.[]')"
+        # find blockers for a given milestone
+        # BLOCKERS_THIS_MILESTONE="$(gh issue list -R eclipse/che -l "severity/blocker" -s "open" -m "${CHE_VERSION%.*}" --json "createdAt,updatedAt,author,title,url,milestone" | jq -r '.[]')"
 
-    # find any blockers, including those unassigned to milestones
-    BLOCKERS_ANY="$(gh issue list -R eclipse/che -l "severity/blocker" -s "open" --json "createdAt,updatedAt,author,title,url,milestone" | jq -r '.[]')"
+        # find any blockers, including those unassigned to milestones
+        BLOCKERS_ANY="$(gh issue list -R eclipse/che -l "severity/blocker" -s "open" --json "createdAt,updatedAt,author,title,url,milestone" | jq -r '.[]')"
 
-    # if [[ $BLOCKERS_THIS_MILESTONE ]]; then
-    #     echo "[ERROR] Blocker issue(s) found for this milestone ${CHE_VERSION%.*}!"
-    #     echo $BLOCKERS_THIS_MILESTONE
-    #     exit 1
-    # fi
-    if [[ $BLOCKERS_ANY ]]; then
-        echo "[ERROR] Blocker issue(s) found!"
-        echo $BLOCKERS_ANY 
-        exit 1
+        # if [[ $BLOCKERS_THIS_MILESTONE ]]; then
+        #     echo "[ERROR] Blocker issue(s) found for this milestone ${CHE_VERSION%.*}!"
+        #     echo $BLOCKERS_THIS_MILESTONE
+        #     exit 1
+        # fi
+        if [[ $BLOCKERS_ANY ]]; then
+            echo "[ERROR] Blocker issue(s) found!"
+            echo $BLOCKERS_ANY 
+            exit 1
+        fi
     fi
 }
 
