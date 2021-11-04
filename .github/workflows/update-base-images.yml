@@ -94,7 +94,11 @@ jobs:
             git config --global user.name "Mykhailo Kuznietsov"
             git config --global user.email "mkuznets@redhat.com"
             echo "running job for ${{ matrix.projects.repo }}"
-            ${{ matrix.projects.command }}
+            mkdir -p /tmp/${{ matrix.projects.repo }}
+            ${{ matrix.projects.command }} | tee /tmp/${{ matrix.projects.repo }}/log.txt
           else
             echo "SKIP running job for ${{ matrix.projects.repo }} - not included in $repos"
           fi
+      - name: PR Link
+        run: |
+            grep "${{ matrix.projects.repo }}/pull/" /tmp/${{ matrix.projects.repo }}/log.txt || true
