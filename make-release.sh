@@ -32,23 +32,28 @@ checkForBlockerIssues()
 {
     # check for blockers only if doing a 7.yy.0 release
     if [[ ${CHE_VERSION} == *".0" ]]; then 
-        # install gh cli from https://github.com/cli/cli/releases/
-        sudo dpkg -i https://github.com/cli/cli/releases/download/v2.2.0/gh_2.2.0_linux_amd64.deb
-
-        # find blockers for a given milestone
-        # BLOCKERS_THIS_MILESTONE="$(gh issue list -R eclipse/che -l "severity/blocker" -s "open" -m "${CHE_VERSION%.*}" --json "createdAt,updatedAt,author,title,url,milestone" | jq -r '.[]')"
-
-        # find any blockers, including those unassigned to milestones
-        BLOCKERS_ANY="$(gh issue list -R eclipse/che -l "severity/blocker" -s "open" --json "createdAt,updatedAt,author,title,url,milestone" | jq -r '.[]')"
-
+        # If in future we want to find blockers for a given milestone, here's how:
+        ## OPTION 1: gh cli
+            # BLOCKERS_THIS_MILESTONE="$(gh issue list -R eclipse/che -l "severity/blocker" -s "open" -m "${CHE_VERSION%.*}" --json "createdAt,updatedAt,author,title,url,milestone" | jq -r '.[]')"
+        ## OPTION 2: gh api
+            # milestone="${CHE_VERSION%.*}"
+            # 7.39 :: 151
+            # milestoneID="$(curl -s "https://api.github.com/repos/eclipse/che/milestones?sort_on=due_on&direction=desc&state=open" | jq -r --arg milestone $milestone '.[]|select(.title==$milestone)|.number' 2>&1)" 
+            # BLOCKERS_THIS_MILESTONE="$(curl -s "https://api.github.com/repos/eclipse/che/issues?labels=severity/blocker&state=open&milestone=${milestoneID}" | jq -r '.[]|[.created_at,.updated_at,.milestone.title,.url,.user.login,.title] | @tsv')"
         # if [[ $BLOCKERS_THIS_MILESTONE ]]; then
         #     echo "[ERROR] Blocker issue(s) found for this milestone ${CHE_VERSION%.*}!"
         #     echo $BLOCKERS_THIS_MILESTONE
         #     exit 1
         # fi
+
+        # Mario and Florent would prefer to search for ANY open blockers, including those unassigned to milestones
+        ## OPTION 1: gh cli
+            # BLOCKERS_ANY="$(gh issue list -R eclipse/che -l "severity/blocker" -s "open" --json "createdAt,updatedAt,author,title,url,milestone" | jq -r '.[]')"
+        ## OPTION 2: gh api
+        BLOCKERS_ANY="$(curl -s "https://api.github.com/repos/eclipse/che/issues?labels=severity/blocker&state=open" | jq -r '.[]|[.created_at,.updated_at,.milestone.title,.url,.user.login,.title] | @tsv')"
         if [[ $BLOCKERS_ANY ]]; then
             echo "[ERROR] Blocker issue(s) found!"
-            echo $BLOCKERS_ANY 
+            echo "$BLOCKERS_ANY"
             exit 1
         fi
     fi
