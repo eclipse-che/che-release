@@ -81,6 +81,29 @@ verifyContainerExistsWithTimeout()
     fi
 }
 
+verifyBranchExistsWithTimeout()
+{
+    this_repo=$1
+    this_branch=$2
+    this_timeout=$3
+    branchExists=0
+    count=1
+    (( timeout_intervals=this_timeout*3 ))
+    while [[ $count -le $timeout_intervals ]]; do # echo $count
+        echo "       [$count/$timeout_intervals] Verify branch ${2} in repo ${1} exists..." 
+        # check if the branch exists
+        branchExists=$(git ls-remote --heads "${this_repo}" "${this_branch}" | wc -l)
+        if [[ ${branchExists} -eq 1 ]]; then break; fi
+        (( count=count+1 ))
+        sleep 20s
+    done
+    # or report an error
+    if [[ ${branchExists} -eq 0 ]]; then
+        echo "[ERROR] Did not find branch ${2} in repo ${1} after ${this_timeout} minutes - script must exit!"
+        exit 1;
+    fi
+}
+
 # for a given container URL, check if it exists and its digest can be read
 # verifyContainerExists quay.io/crw/pluginregistry-rhel8:2.6 # schemaVersion = 1, look for tag
 # verifyContainerExists quay.io/eclipse/che-plugin-registry:7.24.2 # schemaVersion = 2, look for arches
@@ -302,13 +325,20 @@ verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-machine-exec:${
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-devfile-registry:${CHE_VERSION} 60
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-dashboard:${CHE_VERSION} 60
+# shellcheck disable=SC2086
+verifyBranchExistsWithTimeout "https://github.com/che-incubator/configbump.git" ${BRANCH}
+# shellcheck disable=SC2086
+verifyBranchExistsWithTimeout "https://github.com/eclipse/che-jwtproxy.git" ${BRANCH}
+# shellcheck disable=SC2086
+verifyBranchExistsWithTimeout "https://github.com/che-incubator/kubernetes-image-puller.git" ${BRANCH}
+# shellcheck disable=SC2086
+verifyBranchExistsWithTimeout "https://github.com/che-dockerfiles/che-backup-server-rest.git" ${BRANCH}
 
 IMAGES_LIST=(
     quay.io/eclipse/che-endpoint-watcher
     quay.io/eclipse/che-keycloak
     quay.io/eclipse/che-postgres
     quay.io/eclipse/che-server
-    quay.io/eclipse/che-e2e
 )
 
 for image in "${IMAGES_LIST[@]}"; do
@@ -319,6 +349,7 @@ set +x
 # Release server (depends on dashboard)
 if [[ ${PHASES} == *"2"* ]]; then
     releaseCheTheia
+    releaseCheE2E
 fi
 
 # shellcheck disable=SC2086
@@ -326,6 +357,7 @@ if [[ ${PHASES} == *"2"* ]] || [[ ${PHASES} == *"5"* ]]; then
   verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-theia:${CHE_VERSION} 60
   verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-theia-dev:${CHE_VERSION} 60
   verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-theia-endpoint-runtime-binary:${CHE_VERSION} 60
+  verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-e2e:${CHE_VERSION} 60
 fi
 
 # Release plugin-registry (depends on che-theia and machine-exec)
