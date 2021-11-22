@@ -5,44 +5,24 @@
 
 BRANCH=$1
 
-verifyBranchExistsWithTimeout()
-{
-    this_repo=$1
-    this_branch=$2
-    this_timeout=$3
-    branchExists=0
-    count=1
-    (( timeout_intervals=this_timeout*3 ))
-    while [[ $count -le $timeout_intervals ]]; do # echo $count
-        echo "       [$count/$timeout_intervals] Verify branch ${2} in repo ${1} exists..." 
-        # check if the branch exists
-        branchExists=$(git ls-remote --heads "${this_repo}" "${this_branch}" | wc -l)
-        if [[ ${branchExists} -eq 1 ]]; then break; fi
-        (( count=count+1 ))
-        sleep 5s
-    done
-    # or report an error
-    if [[ ${branchExists} -eq 0 ]]; then
-        echo "[ERROR] Did not find branch ${2} in repo ${1} after ${this_timeout} minutes - script must exit!"
-        exit 1;
-    fi
-}
+SCRIPTS_DIR=$(cd "$(dirname "$0")"; pwd)
+source ${SCRIPTS_DIR}/util.sh
 
 REPO_LIST=(
-    eclipse/che-jwtproxy
-    eclipse/che
-    eclipse/che-docs
+    che-dockerfiles/che-backup-server-rest
+    che-incubator/chectl
+    che-incubator/configbump
+    che-incubator/kubernetes-image-puller
     eclipse-che/che-dashboard
-    eclipse-che/che-server
     eclipse-che/che-devfile-registry
-    eclipse-che/che-plugin-registry
     eclipse-che/che-machine-exec
     eclipse-che/che-operator
+    eclipse-che/che-plugin-registry
+    eclipse-che/che-server
     eclipse-che/che-theia
-    che-incubator/kubernetes-image-puller
-    che-incubator/configbump
-    che-incubator/chectl
-    che-dockerfiles/che-backup-server-rest
+    eclipse/che
+    eclipse/che-docs
+    eclipse/che-jwtproxy
 )
 
 for repo in "${REPO_LIST[@]}"; do
