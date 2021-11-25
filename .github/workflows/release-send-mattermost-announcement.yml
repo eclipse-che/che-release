@@ -16,7 +16,7 @@ jobs:
       run: |
         BRANCH=${{ github.event.inputs.version }}
         BRANCH=${BRANCH%.*}.x
-        echo "::set-output name=branch-check::$(./utils/check-branches.sh ${BRANCH})
+        echo "::set-output name=branch-check::$(./utils/check-branches.sh ${BRANCH})"
     - name: Create success message
       run: |
         milestone=${{ github.event.inputs.version }}
