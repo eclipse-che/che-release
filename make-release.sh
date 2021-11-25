@@ -6,6 +6,9 @@
 REGISTRY="quay.io"
 ORGANIZATION="eclipse"
 
+SCRIPTS_DIR=$(cd "$(dirname "$0")"; pwd)
+source ${SCRIPTS_DIR}/utils/util.sh
+
 die_with() 
 {
 	echo "$*" >&2
@@ -302,13 +305,20 @@ verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-machine-exec:${
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-devfile-registry:${CHE_VERSION} 60
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-dashboard:${CHE_VERSION} 60
+# shellcheck disable=SC2086
+verifyBranchExistsWithTimeoutAndExit "https://github.com/che-incubator/configbump.git" ${BRANCH} 60
+# shellcheck disable=SC2086
+verifyBranchExistsWithTimeoutAndExit "https://github.com/eclipse/che-jwtproxy.git" ${BRANCH} 60
+# shellcheck disable=SC2086
+verifyBranchExistsWithTimeoutAndExit "https://github.com/che-incubator/kubernetes-image-puller.git" ${BRANCH} 60
+# shellcheck disable=SC2086
+verifyBranchExistsWithTimeoutAndExit "https://github.com/che-dockerfiles/che-backup-server-rest.git" ${BRANCH} 60
 
 IMAGES_LIST=(
     quay.io/eclipse/che-endpoint-watcher
     quay.io/eclipse/che-keycloak
     quay.io/eclipse/che-postgres
     quay.io/eclipse/che-server
-    quay.io/eclipse/che-e2e
 )
 
 for image in "${IMAGES_LIST[@]}"; do
@@ -319,6 +329,7 @@ set +x
 # Release server (depends on dashboard)
 if [[ ${PHASES} == *"2"* ]]; then
     releaseCheTheia
+    releaseCheE2E
 fi
 
 # shellcheck disable=SC2086
@@ -326,6 +337,7 @@ if [[ ${PHASES} == *"2"* ]] || [[ ${PHASES} == *"5"* ]]; then
   verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-theia:${CHE_VERSION} 60
   verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-theia-dev:${CHE_VERSION} 60
   verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-theia-endpoint-runtime-binary:${CHE_VERSION} 60
+  verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-e2e:${CHE_VERSION} 60
 fi
 
 # Release plugin-registry (depends on che-theia and machine-exec)
