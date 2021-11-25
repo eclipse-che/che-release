@@ -16,7 +16,14 @@ verifyBranchExistsWithTimeout()
     done
     # or report an error
     if [[ ${branchExists} -eq 0 ]]; then
-        echo "[ERROR] Did not find branch ${2} in repo ${1} after ${this_timeout} minutes - script must exit!"
+        echo "[ERROR] Did not find branch ${2} in repo ${1} after ${this_timeout} minutes"
+        return 1;
+    fi
+}
+
+verifyBranchExistsWithTimeoutAndExit()
+{
+    if verifyBranchExistsWithTimeoutAndExit "$@"; then
         exit 1;
     fi
 }

@@ -12,10 +12,11 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - name: Verify branches
+      id: check
       run: |
         BRANCH=${{ github.event.inputs.version }}
         BRANCH=${BRANCH%.*}.x
-        ./utils/check-branches.sh ${BRANCH}
+        echo "::set-output name=branch-check::$(./utils/check-branches.sh ${BRANCH})
     - name: Create success message
       run: |
         milestone=${{ github.event.inputs.version }}
@@ -24,7 +25,7 @@ jobs:
     - name: Create failure message
       if: ${{ failure() }}
       run: |
-        echo "{\"text\":\":che-logo: Che ${{ github.event.inputs.version }} hasn't been released.\n\n Insect workflow logs for more details\"}" > mattermost.json
+        echo "{\"text\":\":che-logo: Che ${{ github.event.inputs.version }} hasn't been released.\n\n Output: ${{join(steps.check.outputs.*, '\n')}}.\"}" > mattermost.json
     - name: Send message
       if: ${{ success() }} || ${{ failure() }}
       uses: mattermost/action-mattermost-notify@1.1.0

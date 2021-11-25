@@ -25,8 +25,19 @@ REPO_LIST=(
     eclipse/che-jwtproxy
 )
 
+MISSING_BRANCHES=
+set -e
 for repo in "${REPO_LIST[@]}"; do
-    verifyBranchExistsWithTimeout "https://github.com/${repo}.git" "${BRANCH}" 1
+    EXIT_CODE=0
+    verifyBranchExistsWithTimeout "https://github.com/${repo}.git" "${BRANCH}" 1 || EXIT_CODE=$?
+    if [[ ${EXIT_CODE} -eq 1 ]]; then
+        MISSING_BRANCHES="${MISSING_BRANCHES} $repo"
+    fi
 done
+set -e
 
-echo "[INFO] Branch ${BRANCH} is present in all Che Projects"
+if [ -n "${MISSING_BRANCHES}" ];then
+    echo "[ERROR] Branch ${BRANCH} is not present in following projects: ${MISSING_BRANCHES}"
+else
+    echo "[INFO] Branch ${BRANCH} is present in all Che Projects"
+fi

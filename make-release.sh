@@ -306,13 +306,13 @@ verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-devfile-registr
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-dashboard:${CHE_VERSION} 60
 # shellcheck disable=SC2086
-verifyBranchExistsWithTimeout "https://github.com/che-incubator/configbump.git" ${BRANCH} 60
+verifyBranchExistsWithTimeoutAndExit "https://github.com/che-incubator/configbump.git" ${BRANCH} 60
 # shellcheck disable=SC2086
-verifyBranchExistsWithTimeout "https://github.com/eclipse/che-jwtproxy.git" ${BRANCH} 60
+verifyBranchExistsWithTimeoutAndExit "https://github.com/eclipse/che-jwtproxy.git" ${BRANCH} 60
 # shellcheck disable=SC2086
-verifyBranchExistsWithTimeout "https://github.com/che-incubator/kubernetes-image-puller.git" ${BRANCH} 60
+verifyBranchExistsWithTimeoutAndExit "https://github.com/che-incubator/kubernetes-image-puller.git" ${BRANCH} 60
 # shellcheck disable=SC2086
-verifyBranchExistsWithTimeout "https://github.com/che-dockerfiles/che-backup-server-rest.git" ${BRANCH} 60
+verifyBranchExistsWithTimeoutAndExit "https://github.com/che-dockerfiles/che-backup-server-rest.git" ${BRANCH} 60
 
 IMAGES_LIST=(
     quay.io/eclipse/che-endpoint-watcher
