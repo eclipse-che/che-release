@@ -26,6 +26,7 @@ REPO_LIST=(
 )
 
 MISSING_BRANCHES=
+numprojects=0
 set -e
 for repo in "${REPO_LIST[@]}"; do
     EXIT_CODE=0
@@ -33,11 +34,12 @@ for repo in "${REPO_LIST[@]}"; do
     if [[ ${EXIT_CODE} -eq 1 ]]; then
         MISSING_BRANCHES="${MISSING_BRANCHES} $repo"
     fi
+    let numprojects=numprojects+1
 done
 set -e
 
 if [ -n "${MISSING_BRANCHES}" ];then
     echo "[ERROR] Branch ${BRANCH} is not present in following projects: ${MISSING_BRANCHES}"
 else
-    echo "[INFO] Branch ${BRANCH} is present in all Che Projects"
+    echo "[INFO] Branch ${BRANCH} is present in all $numprojects Che projects"
 fi
