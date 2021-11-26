@@ -16,7 +16,9 @@ jobs:
       run: |
         BRANCH=${{ github.event.inputs.version }}
         BRANCH=${BRANCH%.*}.x
-        echo "::set-output name=branch-check::$(./utils/check-branches.sh ${BRANCH})"
+        ./utils/check-branches.sh > branches-output
+        pwd && ls -l
+        echo "::set-output name=branch-check::pwd && ls -l && cat branches-output"
     - name: Create success message
       run: |
         milestone=${{ github.event.inputs.version }}
@@ -28,8 +30,4 @@ jobs:
         echo "{\"text\":\":che-logo: Che ${{ github.event.inputs.version }} release final checks have failed:\n\n ${{join(steps.check.outputs.*, '\n')}}.\"}" > mattermost.json
     - name: Send message
       if: ${{ success() }} || ${{ failure() }}
-      uses: mattermost/action-mattermost-notify@1.1.0
-      env:
-        MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
-        MATTERMOST_CHANNEL: eclipse-che-releases
-        MATTERMOST_USERNAME: che-bot
+      run: cat mattermost.json
