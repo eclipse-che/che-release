@@ -10,7 +10,7 @@ verifyBranchExistsWithTimeout()
         echo -n "       [$count/$timeout_intervals] Check ${this_repo%.git}/tree/${this_branch} ..." 
         # check if the branch exists
         branchExists=$(git ls-remote --heads "${this_repo}" "${this_branch}" | wc -l)
-        if [[ ${branchExists} -eq 1 ]]; then echo " found."; break; fi
+        if [[ ${branchExists} -eq 1 ]]; then echo " found."; return 0; break; fi
         (( count=count+1 ))
         sleep 20s
         echo ""
@@ -18,13 +18,14 @@ verifyBranchExistsWithTimeout()
     # or report an error
     if [[ ${branchExists} -eq 0 ]]; then
         echo "[ERROR] Branch ${this_repo%.git}/tree/${this_branch} not found after ${this_timeout} minutes"
-        return 1;
+        return 1
     fi
 }
 
 verifyBranchExistsWithTimeoutAndExit()
 {
-    if verifyBranchExistsWithTimeoutAndExit "$@"; then
-        exit 1;
+    verifyBranchExistsWithTimeout "$@"
+    if [[ $? -gt 0 ]]; then
+        exit 1
     fi
 }
