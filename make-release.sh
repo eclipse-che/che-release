@@ -296,7 +296,6 @@ if [[ ${PHASES} == *"1"* ]]; then
     releaseDashboard
     createBranches
     releaseCheServer
-    releaseCheE2E
 fi
 wait
 # shellcheck disable=SC2086
