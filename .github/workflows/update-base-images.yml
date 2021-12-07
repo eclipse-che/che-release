@@ -107,19 +107,22 @@ jobs:
           echo "REPOS=${{ github.event.inputs.repos || env.DEFAULT_REPOS }}" >> $GITHUB_ENV
       - name: Init
         run: |
-          repos="${{ env.REPOS }}"
-          if [[ $repos == *" ${{ matrix.projects.repo }},"* ]] || [[ $repos == "${{ matrix.projects.repo }},"* ]] || [[ $repos == *"${{ matrix.projects.repo }}" ]] || [[ $repos == "${{ matrix.projects.repo }}" ]]; then
-            pushd /tmp >/dev/null || exit 1
-            curl -sSLO https://raw.githubusercontent.com/redhat-developer/codeready-workspaces/crw-2-rhel-8/product/updateBaseImages.sh
-            chmod +x updateBaseImages.sh
-            popd >/dev/null || exit 1
-            export GITHUB_TOKEN=${{ secrets[matrix.projects.user] }}
-            git config --global user.name "Mykhailo Kuznietsov"
-            git config --global user.email "mkuznets@redhat.com"
-            echo "running job for ${{ matrix.projects.repo }}"
-            mkdir -p /tmp/${{ matrix.projects.repo }}
-            ${{ matrix.projects.command }} | tee /tmp/${{ matrix.projects.repo }}/log.txt
-          else
+          repos=$(echo ${{ env.REPOS }} | tr "," "\n")
+          for r in $repos; do
+            if [[ $r == "${{ matrix.projects.repo }}" ]]; then
+              pushd /tmp >/dev/null || exit 1
+              curl -sSLO https://raw.githubusercontent.com/redhat-developer/codeready-workspaces/crw-2-rhel-8/product/updateBaseImages.sh
+              chmod +x updateBaseImages.sh
+              popd >/dev/null || exit 1
+              export GITHUB_TOKEN=${{ secrets[matrix.projects.user] }}
+              git config --global user.name "Mykhailo Kuznietsov"
+              git config --global user.email "mkuznets@redhat.com"
+              echo "running job for ${{ matrix.projects.repo }}"
+              mkdir -p /tmp/${{ matrix.projects.repo }}
+              ${{ matrix.projects.command }} | tee /tmp/${{ matrix.projects.repo }}/log.txt
+            fi
+          done
+          if [[ ! -d /tmp/${{ matrix.projects.repo }} ]]; then 
             echo "SKIP running job for ${{ matrix.projects.repo }} - not included in $repos"
           fi
       - name: PR Link
