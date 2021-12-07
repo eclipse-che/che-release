@@ -82,9 +82,32 @@ jobs:
           }
           checkVersion 1.1 "$(skopeo --version | sed -e "s/skopeo version //")" skopeo
           checkVersion 2.0 "$(yq --version | sed -e "s/yq //")" yq
+      - name: Set defaults (for use in crontab or workflow_dispatch)
+        env:
+          DEFAULT_REPOS: '
+          che-dockerfiles/che-backup-server-rest, 
+          che-incubator/chectl, 
+          che-incubator/configbump, 
+          che-incubator/jetbrains-editor-images, 
+          che-incubator/kubernetes-image-puller, 
+          che-incubator/kubernetes-image-puller-operator, 
+          devfile/devworkspace-operator, 
+          eclipse-che/che-dashboard, 
+          eclipse-che/che-devfile-registry, 
+          eclipse-che/che-machine-exec, 
+          eclipse-che/che-operator, 
+          eclipse-che/che-plugin-registry, 
+          eclipse-che/che-server, 
+          eclipse-che/che-theia, 
+          eclipse/che, 
+          eclipse/che-jwtproxy, 
+          eclipse/che-plugin-broker
+          '
+        run: |
+          echo "REPOS=${{ github.event.inputs.repos || env.DEFAULT_REPOS }}" >> $GITHUB_ENV
       - name: Init
         run: |
-          repos="${{ github.event.inputs.repos }}"
+          repos="${{ env.REPOS }}"
           if [[ $repos == *" ${{ matrix.projects.repo }},"* ]] || [[ $repos == "${{ matrix.projects.repo }},"* ]] || [[ $repos == *"${{ matrix.projects.repo }}" ]] || [[ $repos == "${{ matrix.projects.repo }}" ]]; then
             pushd /tmp >/dev/null || exit 1
             curl -sSLO https://raw.githubusercontent.com/redhat-developer/codeready-workspaces/crw-2-rhel-8/product/updateBaseImages.sh
