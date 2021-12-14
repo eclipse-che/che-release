@@ -120,7 +120,7 @@ jobs:
               git config --global user.email "mkuznets@redhat.com"
               echo "running job for ${{ matrix.projects.repo }}"
               mkdir -p /tmp/${{ matrix.projects.repo }}
-              ${{ matrix.projects.command }} | tee /tmp/${{ matrix.projects.repo }}/log.txt
+              bash -x ${{ matrix.projects.command }} | tee /tmp/${{ matrix.projects.repo }}/log.txt
             fi
           done
           if [[ ! -d /tmp/${{ matrix.projects.repo }} ]]; then 
