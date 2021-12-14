@@ -41,6 +41,7 @@ jobs:
           - { repo: "che-incubator/jetbrains-editor-images", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/kubernetes-image-puller", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/kubernetes-image-puller-operator", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b master -maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "che-incubator/workspace-data-sync", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "devfile/devworkspace-operator", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-dashboard", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-devfile-registry", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
