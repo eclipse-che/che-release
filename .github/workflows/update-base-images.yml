@@ -150,5 +150,5 @@ jobs:
         uses: mattermost/action-mattermost-notify@1.1.0
         env:
           MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
-          MATTERMOST_CHANNEL: eclipse-che-releases
+          MATTERMOST_CHANNEL: eclipse-che-ci
           MATTERMOST_USERNAME: che-bot
