@@ -55,36 +55,9 @@ jobs:
           - { repo: "eclipse/che-jwtproxy", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse/che-plugin-broker", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b master -maxdepth 3 -f *Dockerfile --pr" }
     steps:
-      - name: "Checkout source code"
-        uses: actions/checkout@v2
-        with:
-          repository: ${{ matrix.projects.repo }}
-          token: ${{ secrets[matrix.projects.user] }}
-          fetch-depth: 0
-      - name: Login to registry.redhat.io 
-        uses: docker/login-action@v1
-        with:
-          registry: registry.redhat.io
-          username: ${{ secrets.CRW_BUILD_USER }}
-          password: ${{ secrets.CRW_BUILD_TOKEN }}
-      - name: Install skopeo + yq
-        run: |
-          checkVersion() {
-            if [[  "$1" = "$(echo -e "$1\n$2" | sort -V | head -n1)" ]]; then
-              # echo "[INFO] $3 version $2 >= $1, can proceed."
-              true
-            else
-              echo "[INFO] Installing $3 version >= $1 ..."
-              if [[ "$3" == "yq" ]]; then
-                pip install "$3"
-              else
-                sudo apt-get -y install "$3"
-              fi
-            fi
-          }
-          checkVersion 1.1 "$(skopeo --version | sed -e "s/skopeo version //")" skopeo
-          checkVersion 2.0 "$(yq --version | sed -e "s/yq //")" yq
-      - name: Set defaults (for use in crontab or workflow_dispatch)
+      - name: Set defaults (for use in crontab or workflow_dispatch) and check if we have a matching repo value 
+        id: SETUP_REPOS
+        shell: bash
         env:
           DEFAULT_REPOS: '
           che-dockerfiles/che-backup-server-rest, 
@@ -107,12 +80,50 @@ jobs:
           eclipse/che-plugin-broker
           '
         run: |
-          echo "REPOS=${{ github.event.inputs.repos || env.DEFAULT_REPOS }}" >> $GITHUB_ENV
+            echo "REPOS=${{ github.event.inputs.repos || env.DEFAULT_REPOS }}" >> $GITHUB_ENV
+            echo ::set-output name=GOT_REPO::false
+            for r in $(echo ${{ github.event.inputs.repos || env.DEFAULT_REPOS }} | tr "," "\n"); do
+              if [[ $r == "${{ matrix.projects.repo }}" ]]; then
+                echo ::set-output name=GOT_REPO::true
+                break
+              fi
+            done
+      - name: "Checkout source code"
+        if: steps.SETUP_REPOS.outputs.GOT_REPO == 'true'
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ matrix.projects.repo }}
+          token: ${{ secrets[matrix.projects.user] }}
+          fetch-depth: 0
+      - name: Login to registry.redhat.io 
+        if: steps.SETUP_REPOS.outputs.GOT_REPO == 'true'
+        uses: docker/login-action@v1
+        with:
+          registry: registry.redhat.io
+          username: ${{ secrets.CRW_BUILD_USER }}
+          password: ${{ secrets.CRW_BUILD_TOKEN }}
       - name: Init
+        if: steps.SETUP_REPOS.outputs.GOT_REPO == 'true'
         run: |
+          checkVersion() {
+            if [[  "$1" = "$(echo -e "$1\n$2" | sort -V | head -n1)" ]]; then
+              # echo "[INFO] $3 version $2 >= $1, can proceed."
+              true
+            else
+              echo "[INFO] Installing $3 version >= $1 ..."
+              if [[ "$3" == "yq" ]]; then
+                pip install "$3"
+              else
+                sudo apt-get -y install "$3"
+              fi
+            fi
+          }
           repos=$(echo ${{ env.REPOS }} | tr "," "\n")
           for r in $repos; do
             if [[ $r == "${{ matrix.projects.repo }}" ]]; then
+              # Install skopeo + yq
+              checkVersion 1.1 "$(skopeo --version | sed -e "s/skopeo version //")" skopeo
+              checkVersion 2.0 "$(yq --version | sed -e "s/yq //")" yq
               pushd /tmp >/dev/null || exit 1
               curl -sSLO https://raw.githubusercontent.com/redhat-developer/codeready-workspaces/crw-2-rhel-8/product/updateBaseImages.sh
               chmod +x updateBaseImages.sh
@@ -123,6 +134,7 @@ jobs:
               echo "running job for ${{ matrix.projects.repo }}"
               mkdir -p /tmp/${{ matrix.projects.repo }}
               ${{ matrix.projects.command }} | tee /tmp/${{ matrix.projects.repo }}/log.txt
+              break
             fi
           done
           if [[ ! -d /tmp/${{ matrix.projects.repo }} ]]; then 
