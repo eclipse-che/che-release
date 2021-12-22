@@ -128,6 +128,27 @@ jobs:
           if [[ ! -d /tmp/${{ matrix.projects.repo }} ]]; then 
             echo "SKIP running job for ${{ matrix.projects.repo }} - not included in $repos"
           fi
-      - name: PR Link
+      - name: PR link
+        id: SETUP_PR_LINK
+        shell: bash
         run: |
-            grep "${{ matrix.projects.repo }}/pull/" /tmp/${{ matrix.projects.repo }}/log.txt || true
+            echo ::set-output name=GOT_PR::false
+            if [[ -f /tmp/${{ matrix.projects.repo }}/log.txt ]]; then
+              URL=$(grep "${{ matrix.projects.repo }}/pull/" /tmp/${{ matrix.projects.repo }}/log.txt 2>/dev/null || true)
+              if [[ $URL ]]; then 
+                echo "$URL"
+                echo "PR_URL=\"$URL\"" >> $GITHUB_ENV
+                echo ::set-output name=GOT_PR::true
+              fi
+            fi
+      - name: Create MM message
+        if: steps.SETUP_PR_LINK.outputs.GOT_PR == 'true'
+        run: |
+          echo "{\"text\":\":octocat: Base image update for [${{ matrix.projects.repo }}](${{ env.PR_URL }})\"}" > mattermost.json
+      - name: Send MM message
+        if: steps.SETUP_PR_LINK.outputs.GOT_PR == 'true'
+        uses: mattermost/action-mattermost-notify@1.1.0
+        env:
+          MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
+          MATTERMOST_CHANNEL: eclipse-che-ci
+          MATTERMOST_USERNAME: che-bot
