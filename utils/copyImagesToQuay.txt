@@ -4,7 +4,7 @@
 
 docker.io/centos/mongodb-36-centos7
 docker.io/centos/mysql-57-centos7
-docker.io/mariadb:10.7
+docker.io/mariadb:10.7.1
 # registries use :latest, operator csv uses :9.6
 #docker.io/centos/postgresql-96-centos7
 #docker.io/centos/postgresql-96-centos7:9.6
