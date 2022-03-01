@@ -56,14 +56,6 @@ checkForBlockerIssues()
     fi
 }
 
-# TODO do we still actually use nodejs in this repo? 
-installDebDeps(){
-    set +x
-    # see latest at https://github.com/nodesource/distributions
-    curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-    sudo apt-get install -y nodejs
-}
-
 evaluateCheVariables() {
     echo "Che version: ${CHE_VERSION}"
     # derive branch from version
@@ -163,9 +155,6 @@ echo "$CHE_GITHUB_SSH_KEY" | base64 -d > "$HOME/.ssh/id_rsa"
 chmod 0400 "$HOME/.ssh/id_rsa"
 ssh-keyscan github.com >> ~/.ssh/known_hosts
 set -x
-
-# TODO do we still actually use nodejs in this repo? 
-installDebDeps
 
 checkForBlockerIssues
 setupGitconfig
