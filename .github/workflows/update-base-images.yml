@@ -21,9 +21,7 @@ on:
         eclipse-che/che-plugin-registry, 
         eclipse-che/che-server, 
         eclipse-che/che-theia, 
-        eclipse/che, 
-        eclipse/che-jwtproxy, 
-        eclipse/che-plugin-broker
+        eclipse/che
         '
   schedule:
   - cron: "0 0 * * 6"
@@ -52,8 +50,6 @@ jobs:
           - { repo: "eclipse-che/che-server", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-theia", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 5 -f *[dD]ockerfile --pr" }
           - { repo: "eclipse/che", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "eclipse/che-jwtproxy", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "eclipse/che-plugin-broker", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b master -maxdepth 3 -f *Dockerfile --pr" }
     steps:
       - name: Set defaults (for use in crontab or workflow_dispatch) and check if we have a matching repo value 
         id: SETUP_REPOS
@@ -75,9 +71,7 @@ jobs:
           eclipse-che/che-plugin-registry, 
           eclipse-che/che-server, 
           eclipse-che/che-theia, 
-          eclipse/che, 
-          eclipse/che-jwtproxy, 
-          eclipse/che-plugin-broker
+          eclipse/che
           '
         run: |
             echo "REPOS=${{ github.event.inputs.repos || env.DEFAULT_REPOS }}" >> $GITHUB_ENV
