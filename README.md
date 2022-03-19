@@ -52,7 +52,6 @@ The projects that are covered by this workflow release container images:
 
 Additionally, these slower-moving projects perform branch creation every sprint:
 - [configbump](https://github.com/che-incubator/configbump)
-- [che-jwtproxy](https://github.com/eclipse/che-jwtproxy)
 - [kubernetes-image-puller](https://github.com/che-incubator/kubernetes-image-puller)
 - [che-backup-server-rest](https://github.com/che-dockerfiles/che-backup-server-rest)
 
@@ -74,7 +73,6 @@ Currently there are several phases, representing an order of projects, which we 
   * [che-server](https://github.com/eclipse-che/che-server);
 * then creation of branches for:
   * [configbump](https://github.com/che-incubator/configbump),
-  * [che-jwt-proxy](https://github.com/eclipse/che-jwtproxy), 
   * [kubernetes-image-puller](https://github.com/che-incubator/kubernetes-image-puller),
   * [che-backup-server-rest](https://github.com/che-dockerfiles/che-backup-server-rest)
 

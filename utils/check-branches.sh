@@ -22,7 +22,6 @@ REPO_LIST=(
     eclipse-che/che-theia
     eclipse/che
     eclipse/che-docs
-    eclipse/che-jwtproxy
 )
 
 MISSING_BRANCHES=
