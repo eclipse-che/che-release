@@ -7,6 +7,7 @@
 DEFAULT_REPOS="\
 che-dockerfiles/che-backup-server-rest \
 che-incubator/chectl \
+che-incubator/che-code \
 che-incubator/configbump \
 che-incubator/jetbrains-editor-images \
 che-incubator/kubernetes-image-puller \

@@ -8,6 +8,7 @@ on:
         default: '
         che-dockerfiles/che-backup-server-rest, 
         che-incubator/chectl, 
+        che-incubator/che-code, 
         che-incubator/configbump, 
         che-incubator/jetbrains-editor-images, 
         che-incubator/kubernetes-image-puller, 
@@ -36,6 +37,7 @@ jobs:
         projects:
           - { repo: "che-dockerfiles/che-backup-server-rest", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/chectl", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "che-incubator/che-code", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/configbump", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/jetbrains-editor-images", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/kubernetes-image-puller", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
@@ -58,6 +60,7 @@ jobs:
           DEFAULT_REPOS: '
           che-dockerfiles/che-backup-server-rest, 
           che-incubator/chectl, 
+          che-incubator/che-code, 
           che-incubator/configbump, 
           che-incubator/jetbrains-editor-images, 
           che-incubator/kubernetes-image-puller, 
