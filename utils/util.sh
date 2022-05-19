@@ -113,7 +113,7 @@ verifyContainerExists()
         echo "[INFO] Found ${this_containerURL} (tag = $this_tag)"
         containerExists=1
     elif [[ $(echo "$result" | jq -r '.schemaVersion' || true) == "2" ]]; then
-        arches=$(echo "$result" | jq -r '.manifests[].platform.architecture')
+        arches=$(echo "$result" | jq -r '[.manifests[].platform.architecture]|@csv' | tr -d "\"")
         if [[ $arches ]]; then
             echo "[INFO] Found ${this_containerURL} (arches = $arches)"
         fi
