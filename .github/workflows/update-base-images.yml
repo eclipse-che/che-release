@@ -122,7 +122,7 @@ jobs:
               checkVersion 1.1 "$(skopeo --version | sed -e "s/skopeo version //")" skopeo
               checkVersion 2.0 "$(yq --version | sed -e "s/yq //")" yq
               pushd /tmp >/dev/null || exit 1
-              curl -sSLO https://raw.githubusercontent.com/redhat-developer/codeready-workspaces/crw-2-rhel-8/product/updateBaseImages.sh
+              curl -sSLO https://raw.githubusercontent.com/redhat-developer/codeready-workspaces/devspaces-3-rhel-8/product/updateBaseImages.sh
               chmod +x updateBaseImages.sh
               popd >/dev/null || exit 1
               export GITHUB_TOKEN=${{ secrets[matrix.projects.user] }}
