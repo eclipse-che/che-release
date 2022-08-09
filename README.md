@@ -1,9 +1,3 @@
-This repo contains orchestration scripts for Eclipse Che artifacts and container images.
-
-Job is https://ci.centos.org/job/devtools-che-release-che-release
-
-Note that over time, this job, and all the jobs called by it, will be migrated to a GH action script.
-
 # Che release process
 
 ## Permissions
@@ -87,7 +81,7 @@ Note that this approach will change, once a new system will be implemented, wher
 
 
 ## Release procedure
-1. [Create new release issue to report status and collect any blocking issues](https://github.com/eclipse/che/issues/new?assignees=&labels=kind%2Frelease&template=release.md&title=Release+Che+7.FIXME)
+1. Original procedure was to [create new release issue to report status and collect any blocking issues](https://github.com/eclipse/che/issues/new?assignees=&labels=kind%2Frelease&template=release.md&title=Release+Che+7.FIXME), however the issue was usually empty since problems are resolved via Mattermost and Slack so communication is done there. 
 
 2. To start a release, use the [Release - Orchestrate Overall Release Phases](https://github.com/eclipse-che/che-release/actions/workflows/release-orchestrate-overall.yml) workflow to trigger workflows in other Che repos. Workflows triggered align to the repos noted in the previous section. In the input, provide the version of Che, and phases to run. 
 
