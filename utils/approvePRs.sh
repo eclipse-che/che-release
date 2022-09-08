@@ -40,10 +40,13 @@ Usage:
 "
 }
 
+QUIET=0
+if [[ $1 == "-q" ]]; then QUIET=1; fi
+
 if [[ ! "${GITHUB_TOKEN}" ]]; then usageGHT; exit 1; fi
 
 for ownerRepo in $DEFAULT_REPOS; do
-    echo; echo "Check for open $ownerRepo PRs"
+    if [[ $QUIET -eq 0 ]]; then echo; echo "Check for open $ownerRepo PRs"; fi
     # get open PRs, reported by che-incubator bot, with head.ref like pr-update-base-images-1651279364
     curl -sSL -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3+json" \
         "https://api.github.com/repos/${ownerRepo}/pulls?state=open&base=main" | jq -r \
@@ -58,8 +61,10 @@ for ownerRepo in $DEFAULT_REPOS; do
         PR_URL=${unmerged_PRs[0]}
         # approve it
         reviewResult="$(curl -sSL -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3+json" -d '{"event":"APPROVE"}' ${PR_URL}/reviews)"
-        echo -n "${PR_URL}: "
-        echo $reviewResult | jq -r '[.state, .commit_id] | @tsv'
+        if [[ $QUIET -eq 0 ]]; then 
+            echo -n "${PR_URL}: "
+            echo $reviewResult | jq -r '[.state, .commit_id] | @tsv'
+        fi
         # squash-merge it
         mergeResult="$(curl -sSL -X PUT -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3+json" -d '{"merge_method":"squash"}' ${PR_URL}/merge)"
         echo -n "${PR_URL}: "
