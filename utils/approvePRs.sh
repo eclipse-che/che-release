@@ -46,7 +46,7 @@ if [[ $1 == "-q" ]]; then QUIET=1; fi
 if [[ ! "${GITHUB_TOKEN}" ]]; then usageGHT; exit 1; fi
 
 for ownerRepo in $DEFAULT_REPOS; do
-    if [[ $QUIET -eq 0 ]]; then echo; echo "Check for open $ownerRepo PRs"; fi
+    if [[ $QUIET -eq 0 ]]; then echo "Check for open $ownerRepo PRs"; fi
     # get open PRs, reported by che-incubator bot, with head.ref like pr-update-base-images-1651279364
     curl -sSL -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3+json" \
         "https://api.github.com/repos/${ownerRepo}/pulls?state=open&base=main" | jq -r \
@@ -79,5 +79,6 @@ for ownerRepo in $DEFAULT_REPOS; do
                 echo $closeResult | jq -r '[.state, .closed_at] | @tsv'
             done
         fi
+        echo
     fi
 done
