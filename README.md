@@ -34,6 +34,7 @@ With the exception of some projects, it allows to perform the bulk of the releas
 The projects that are covered by this workflow release container images:
 
 - [che-e2e](https://github.com/eclipse/che) - https://quay.io/eclipse/che-e2e
+- [che-code](https://github.com/che-incubator/che-code) - https://quay.io/che-incubator/che-code
 - [che-machine-exec](https://github.com/eclipse-che/che-machine-exec) - https://quay.io/eclipse/che-machine-exec
 - [che-theia](https://github.com/eclipse-che/che-theia) - 
   - https://quay.io/eclipse/che-theia-dev, 
@@ -66,6 +67,7 @@ At the moment, [Release - Orchestrate Overall Release Phases]((https://github.co
 Currently there are several phases, representing an order of projects, which we can execute in parallel, as long as their dependent projects have been released. Projects in lower phases are those, on which projects from higher phase will depend.
 
 * Phase 1 - releases of:
+  * [che-code](https://github.com/che-incubator/che-code), 
   * [che-machine-exec](https://github.com/eclipse-che/che-machine-exec), 
   * [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry), 
   * [che-dashboard](https://github.com/eclipse-che/che-dashboard), 
