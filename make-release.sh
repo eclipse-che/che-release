@@ -85,6 +85,10 @@ releaseMachineExec() {
     invokeAction eclipse-che/che-machine-exec "Release Che Machine Exec" "7369994" "version=${CHE_VERSION}"
 }
 
+releaseCheCode() {
+    invokeAction che-incubator/che-code "Release Che Code" "34764281, "version=${CHE_VERSION}"
+}
+
 releaseCheTheia() {
     invokeAction eclipse-che/che-theia "Release Che Theia" "5717988" "version=${CHE_VERSION}"
 }
@@ -165,6 +169,7 @@ set -e
 # Release projects that don't depend on other projects
 set +x
 if [[ ${PHASES} == *"1"* ]]; then
+    releaseCheCode
     releaseMachineExec
     releaseDevfileRegistry
     releaseDashboard
@@ -172,6 +177,8 @@ if [[ ${PHASES} == *"1"* ]]; then
     releaseCheServer
 fi
 wait
+# shellcheck disable=SC2086
+verifyContainerExistsWithTimeout ${REGISTRY}/che-incubator/che-code:${CHE_VERSION} 60
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-machine-exec:${CHE_VERSION} 60
 # shellcheck disable=SC2086
