@@ -86,7 +86,7 @@ releaseMachineExec() {
 }
 
 releaseCheCode() {
-    invokeAction che-incubator/che-code "Release Che Code" "34764281, "version=${CHE_VERSION}"
+    invokeAction che-incubator/che-code "Release Che Code" "34764281" "version=${CHE_VERSION}"
 }
 
 releaseCheTheia() {
