@@ -12,6 +12,7 @@ on:
         # removed: old projects
         # che-dockerfiles/che-backup-server-rest, 
         # che-incubator/workspace-data-sync, 
+        #TODO when adding/removing from this list, see lists below in this file and also in ../../utils/approvePRs.sh
         default: '
         che-incubator/chectl, 
         che-incubator/che-code, 

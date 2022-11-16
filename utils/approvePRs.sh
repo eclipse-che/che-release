@@ -1,18 +1,26 @@
 #!/bin/bash
-
+#
+# Copyright (c) 2022 Red Hat, Inc.
+# This program and the accompanying materials are made
+# available under the terms of the Eclipse Public License 2.0
+# which is available at https://www.eclipse.org/legal/epl-2.0/
+#
+# SPDX-License-Identifier: EPL-2.0
+#
 # attempt to approve generated PRs via GH api
 # will fail if GH token not exported first
 
+# removed: old projects
+# che-dockerfiles/che-backup-server-rest \
+# che-incubator/workspace-data-sync \
 # list copied from .github/workflows/update-base-images.yml
 DEFAULT_REPOS="\
-che-dockerfiles/che-backup-server-rest \
 che-incubator/chectl \
 che-incubator/che-code \
 che-incubator/configbump \
 che-incubator/jetbrains-editor-images \
 che-incubator/kubernetes-image-puller \
 che-incubator/kubernetes-image-puller-operator \
-che-incubator/workspace-data-sync \
 devfile/devworkspace-operator \
 eclipse-che/che-dashboard \
 eclipse-che/che-devfile-registry \
@@ -36,24 +44,32 @@ usage () {
     echo "
 Usage:
 
-  $0 
+  $0 -b BRANCH [--quiet]
 "
 }
 
 QUIET=0
-if [[ $1 == "-q" ]]; then QUIET=1; fi
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
+    '-q'|'--quiet') QUIET=1;;
+    '-b') BRANCH="$2"; shift 1;;
+    '-h') usage; exit 0;;
+  esac
+  shift 1
+done
 
 if [[ ! "${GITHUB_TOKEN}" ]]; then usageGHT; exit 1; fi
+if [[ ! "${BRANCH}" ]]; then usage; exit 1; fi
 
 for ownerRepo in $DEFAULT_REPOS; do
-    if [[ $QUIET -eq 0 ]]; then echo "Check for open $ownerRepo PRs"; fi
+    if [[ $QUIET -eq 0 ]]; then echo "Check for open $ownerRepo PRs in branch ${BRANCH}"; fi
     # get open PRs, reported by che-incubator bot, with head.ref like pr-update-base-images-1651279364
     curl -sSL -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3+json" \
-        "https://api.github.com/repos/${ownerRepo}/pulls?state=open&base=main" | jq -r \
+        "https://api.github.com/repos/${ownerRepo}/pulls?state=open&base=${BRANCH}" | jq -r \
         '.[] | select((.user.login == "che-incubator-bot") or (.user.login == "che-bot")) | select(.head.ref|test("pr-update-base-images-.")) | [.user.login, .head.ref, ._links.self.href, ._links.html.href] | @tsv'
     # process PRs
     unmerged_PRs_string="$(curl -sSL -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3+json" \
-        "https://api.github.com/repos/${ownerRepo}/pulls?state=open&base=main" | jq -r \
+        "https://api.github.com/repos/${ownerRepo}/pulls?state=open&base=${BRANCH}" | jq -r \
         '.[] | select((.user.login == "che-incubator-bot") or (.user.login == "che-bot")) | select(.head.ref|test("pr-update-base-images-.")) | ._links.self.href')"
     unmerged_PRs=($unmerged_PRs_string); # echo $unmerged_PRs_string; echo "${#unmerged_PRs[@]}"
 
