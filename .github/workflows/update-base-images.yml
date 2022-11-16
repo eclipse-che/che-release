@@ -3,21 +3,22 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'The branch to update, eg., main or 7.56.x'
+        description: 'The branch to update, eg., main or 7.56.x (or 20221111 for che-incubator/jetbrains-editor-images)'
         required: true
         default: 'main'
       repos:
         description: 'List of repos to check for updates, comma-separated'
         required: true
+        # removed: old projects
+        # che-dockerfiles/che-backup-server-rest, 
+        # che-incubator/workspace-data-sync, 
         default: '
-        che-dockerfiles/che-backup-server-rest, 
         che-incubator/chectl, 
         che-incubator/che-code, 
         che-incubator/configbump, 
         che-incubator/jetbrains-editor-images, 
         che-incubator/kubernetes-image-puller, 
         che-incubator/kubernetes-image-puller-operator, 
-        che-incubator/workspace-data-sync, 
         devfile/devworkspace-operator, 
         eclipse-che/che-dashboard, 
         eclipse-che/che-devfile-registry, 
@@ -39,14 +40,15 @@ jobs:
       fail-fast: false
       matrix: 
         projects:
-          - { repo: "che-dockerfiles/che-backup-server-rest", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
+          # removed: old projects
+          # - { repo: "che-dockerfiles/che-backup-server-rest", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
+          # - { repo: "che-incubator/workspace-data-sync", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/chectl", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/che-code", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/configbump", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/jetbrains-editor-images", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/kubernetes-image-puller", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/kubernetes-image-puller-operator", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "che-incubator/workspace-data-sync", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "devfile/devworkspace-operator", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-dashboard", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-devfile-registry", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
@@ -62,15 +64,16 @@ jobs:
         shell: bash
         env:
           DEFAULT_BRANCH: 'main'
+          # removed: old projects
+          # che-dockerfiles/che-backup-server-rest, 
+          # che-incubator/workspace-data-sync, 
           DEFAULT_REPOS: '
-          che-dockerfiles/che-backup-server-rest, 
           che-incubator/chectl, 
           che-incubator/che-code, 
           che-incubator/configbump, 
           che-incubator/jetbrains-editor-images, 
           che-incubator/kubernetes-image-puller, 
           che-incubator/kubernetes-image-puller-operator, 
-          che-incubator/workspace-data-sync, 
           devfile/devworkspace-operator, 
           eclipse-che/che-dashboard, 
           eclipse-che/che-devfile-registry, 
