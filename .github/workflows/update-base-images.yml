@@ -2,6 +2,10 @@ name: Update base images
 on:
   workflow_dispatch:
     inputs:
+      branch:
+        description: 'The branch to update, eg., main or 7.56.x'
+        required: true
+        default: 'main'
       repos:
         description: 'List of repos to check for updates, comma-separated'
         required: true
@@ -30,33 +34,34 @@ on:
 jobs:
   build:
     name: Check
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy: 
       fail-fast: false
       matrix: 
         projects:
-          - { repo: "che-dockerfiles/che-backup-server-rest", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "che-incubator/chectl", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "che-incubator/che-code", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "che-incubator/configbump", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "che-incubator/jetbrains-editor-images", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "che-incubator/kubernetes-image-puller", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "che-incubator/kubernetes-image-puller-operator", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b master -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "che-incubator/workspace-data-sync", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "devfile/devworkspace-operator", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "eclipse-che/che-dashboard", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "eclipse-che/che-devfile-registry", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "eclipse-che/che-machine-exec", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "eclipse-che/che-operator", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 1 -f *Dockerfile --pr" }
-          - { repo: "eclipse-che/che-plugin-registry", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "eclipse-che/che-server", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "eclipse-che/che-theia", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 5 -f *[dD]ockerfile --pr" }
-          - { repo: "eclipse/che", user: "CHE_BOT_GITHUB_TOKEN", command: "/tmp/updateBaseImages.sh -b main -maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "che-dockerfiles/che-backup-server-rest", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "che-incubator/chectl", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "che-incubator/che-code", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "che-incubator/configbump", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "che-incubator/jetbrains-editor-images", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "che-incubator/kubernetes-image-puller", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "che-incubator/kubernetes-image-puller-operator", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "che-incubator/workspace-data-sync", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "devfile/devworkspace-operator", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "eclipse-che/che-dashboard", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "eclipse-che/che-devfile-registry", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "eclipse-che/che-machine-exec", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "eclipse-che/che-operator", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 1 -f *Dockerfile --pr" }
+          - { repo: "eclipse-che/che-plugin-registry", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "eclipse-che/che-server", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "eclipse-che/che-theia", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 5 -f *[dD]ockerfile --pr" }
+          - { repo: "eclipse/che", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
     steps:
       - name: Set defaults (for use in crontab or workflow_dispatch) and check if we have a matching repo value 
         id: SETUP_REPOS
         shell: bash
         env:
+          DEFAULT_BRANCH: 'main'
           DEFAULT_REPOS: '
           che-dockerfiles/che-backup-server-rest, 
           che-incubator/chectl, 
@@ -77,6 +82,7 @@ jobs:
           eclipse/che
           '
         run: |
+            echo "BRANCH=${{ github.event.inputs.branch || env.DEFAULT_BRANCH }}" >> $GITHUB_ENV
             echo "REPOS=${{ github.event.inputs.repos || env.DEFAULT_REPOS }}" >> $GITHUB_ENV
             echo ::set-output name=GOT_REPO::false
             for r in $(echo ${{ github.event.inputs.repos || env.DEFAULT_REPOS }} | tr "," "\n"); do
@@ -126,11 +132,11 @@ jobs:
               chmod +x updateBaseImages.sh
               popd >/dev/null || exit 1
               export GITHUB_TOKEN=${{ secrets[matrix.projects.user] }}
-              git config --global user.name "Mykhailo Kuznietsov"
-              git config --global user.email "mkuznets@redhat.com"
+              git config --global user.name "Nick Boldt"
+              git config --global user.email "nboldt@redhat.com"
               echo "running job for ${{ matrix.projects.repo }}"
               mkdir -p /tmp/${{ matrix.projects.repo }}
-              ${{ matrix.projects.command }} | tee /tmp/${{ matrix.projects.repo }}/log.txt
+              /tmp/updateBaseImages.sh -b ${{ env.BRANCH }} ${{ matrix.projects.commandFlags }} | tee /tmp/${{ matrix.projects.repo }}/log.txt
               break
             fi
           done
