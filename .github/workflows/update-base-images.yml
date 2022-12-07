@@ -21,6 +21,7 @@ on:
         che-incubator/kubernetes-image-puller, 
         che-incubator/kubernetes-image-puller-operator, 
         devfile/devworkspace-operator, 
+        devfile/developer-images, 
         eclipse-che/che-dashboard, 
         eclipse-che/che-devfile-registry, 
         eclipse-che/che-machine-exec, 
@@ -51,6 +52,7 @@ jobs:
           - { repo: "che-incubator/kubernetes-image-puller", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/kubernetes-image-puller-operator", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "devfile/devworkspace-operator", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
+          - { repo: "devfile/developer-images", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-dashboard", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-devfile-registry", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-machine-exec", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
@@ -76,6 +78,7 @@ jobs:
           che-incubator/kubernetes-image-puller, 
           che-incubator/kubernetes-image-puller-operator, 
           devfile/devworkspace-operator, 
+          devfile/developer-images, 
           eclipse-che/che-dashboard, 
           eclipse-che/che-devfile-registry, 
           eclipse-che/che-machine-exec, 
