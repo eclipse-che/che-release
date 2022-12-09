@@ -37,7 +37,7 @@ on:
 jobs:
   build:
     name: Check
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     strategy: 
       fail-fast: false
       matrix: 
@@ -100,14 +100,14 @@ jobs:
             done
       - name: "Checkout source code"
         if: steps.SETUP_REPOS.outputs.GOT_REPO == 'true'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: ${{ matrix.projects.repo }}
           token: ${{ secrets[matrix.projects.user] }}
           fetch-depth: 0
       - name: Login to registry.redhat.io 
         if: steps.SETUP_REPOS.outputs.GOT_REPO == 'true'
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: registry.redhat.io
           username: ${{ secrets.CRW_BUILD_USER }}
