@@ -173,8 +173,8 @@ if [[ ${PHASES} == *"1"* ]]; then
     releaseMachineExec
     releaseDevfileRegistry
     releaseDashboard
-    createBranches
     releaseCheServer
+    createBranches
 fi
 wait
 # shellcheck disable=SC2086

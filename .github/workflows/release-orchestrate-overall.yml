@@ -18,8 +18,8 @@ on:
       phases:
         description: '
 # Comma-separated phases to perform.
-#1: CheCode, MachineExec, DevfileRegistry, Dashboard, CheServer, CheE2E, branches
-#2: CheTheia;
+#1: CheCode, MachineExec, DevfileRegistry, Dashboard, CheServer, branches
+#2: CheTheia, CheE2E;
 #3: ChePluginRegistry;
 #4: CheOperator;
 # Default: 1,2,3,4
