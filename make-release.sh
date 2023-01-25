@@ -103,7 +103,6 @@ releasePluginRegistry() {
 createBranches() {
     invokeAction che-incubator/configbump "Create branch" "11029799" "branch=${BRANCH}"
     invokeAction che-incubator/kubernetes-image-puller "Create branch" "5409996" "branch=${BRANCH}"
-    invokeAction che-dockerfiles/che-backup-server-rest  "Create branch" "11838866" "branch=${BRANCH}"
 }
 
 releaseDashboard() {
@@ -189,8 +188,6 @@ verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-dashboard:${CHE
 verifyBranchExistsWithTimeoutAndExit "https://github.com/che-incubator/configbump.git" ${BRANCH} 60
 # shellcheck disable=SC2086
 verifyBranchExistsWithTimeoutAndExit "https://github.com/che-incubator/kubernetes-image-puller.git" ${BRANCH} 60
-# shellcheck disable=SC2086
-verifyBranchExistsWithTimeoutAndExit "https://github.com/che-dockerfiles/che-backup-server-rest.git" ${BRANCH} 60
 
 IMAGES_LIST=(
     quay.io/eclipse/che-endpoint-watcher
