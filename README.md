@@ -72,7 +72,7 @@ Currently there are several phases, representing an order of projects, which we 
   * [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry)
 
 * Phase 4:
-  * [che-operator](https://github.com/eclipse-che/che-operator) - depends on phases 1 to 4 and performs several e2e validation tests
+  * [che-operator](https://github.com/eclipse-che/che-operator) - depends on phases 1 to 3 and performs several e2e validation tests
 
 The phases list is a comma-separated list (default, which includes all phases "1,2,3,4"). Removing certain phases is useful, when you rerun the orchestration job, and certain projects shouldn't be released again. 
 Note that this approach will change, once a new system will be implemented, where we can more clearly specify dependencies between workflows, using special types of GitHub action.
