@@ -1,6 +1,6 @@
 #!/bin/bash -e
 #
-# Copyright (c) 2021 Red Hat, Inc.
+# Copyright (c) 2021-2023 Red Hat, Inc.
 # This program and the accompanying materials are made
 # available under the terms of the Eclipse Public License 2.0
 # which is available at https://www.eclipse.org/legal/epl-2.0/
@@ -20,7 +20,7 @@ Existing secrets will be overwritten.
 Repos file should include one org/repo per line. For example:
 
 eclipse-che/che-server
-eclipse-che/che-theia
+eclipse-che/che-code
 ...
 
 Secrets file should include one secret name and value, space-separated, per line. For example:

@@ -29,7 +29,6 @@ eclipse-che/che-machine-exec \
 eclipse-che/che-operator \
 eclipse-che/che-plugin-registry \
 eclipse-che/che-server \
-eclipse-che/che-theia \
 eclipse/che \
 "
 

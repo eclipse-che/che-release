@@ -28,7 +28,6 @@ on:
         eclipse-che/che-operator, 
         eclipse-che/che-plugin-registry, 
         eclipse-che/che-server, 
-        eclipse-che/che-theia, 
         eclipse/che
         '
   schedule:
@@ -59,7 +58,6 @@ jobs:
           - { repo: "eclipse-che/che-operator", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 1 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-plugin-registry", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "eclipse-che/che-server", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
-          - { repo: "eclipse-che/che-theia", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 5 -f *[dD]ockerfile --pr" }
           - { repo: "eclipse/che", user: "CHE_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
     steps:
       - name: Set defaults (for use in crontab or workflow_dispatch) and check if we have a matching repo value 
@@ -85,7 +83,6 @@ jobs:
           eclipse-che/che-operator, 
           eclipse-che/che-plugin-registry, 
           eclipse-che/che-server, 
-          eclipse-che/che-theia, 
           eclipse/che
           '
         run: |

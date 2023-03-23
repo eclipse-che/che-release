@@ -18,9 +18,9 @@ on:
       phases:
         description: '
 # Comma-separated phases to perform.
-#1: CheCode, MachineExec, DevfileRegistry, Dashboard, CheServer, branches
-#2: CheTheia, CheE2E;
-#3: ChePluginRegistry;
+#1: Code, MachineExec, Dashboard, Server, branches;
+#2: E2E, PluginRegistry;
+#3: DevfileRegistry;
 #4: CheOperator;
 # Default: 1,2,3,4
 # Omit phases that have successfully run.
