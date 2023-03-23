@@ -30,11 +30,6 @@ The projects that are covered by this workflow release container images:
 - [che-e2e](https://github.com/eclipse/che) - https://quay.io/eclipse/che-e2e
 - [che-code](https://github.com/che-incubator/che-code) - https://quay.io/che-incubator/che-code
 - [che-machine-exec](https://github.com/eclipse-che/che-machine-exec) - https://quay.io/eclipse/che-machine-exec
-- [che-theia](https://github.com/eclipse-che/che-theia) - 
-  - https://quay.io/eclipse/che-theia-dev, 
-  - https://quay.io/eclipse-che/che-theia, 
-  - https://quay.io/eclipse/che-theia-endpoint-runtime-binary,
-  - https://quay.io/eclipse/che-theia-vsix-installer
 - [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry) - https://quay.io/eclipse/che-devfile-registry
 - [che-plugin-registry](https://github.com/eclipse-che/che-plugin-registry) - https://quay.io/eclipse/che-plugin-registry
 - [che-dashboard](https://github.com/eclipse-che/che-dashboard) - https://quay.io/eclipse/che-dashboard
@@ -60,23 +55,24 @@ Che Operator requires manual verifications by Deploy team (and also various test
 At the moment, [Release - Orchestrate Overall Release Phases]((https://github.com/eclipse-che/che-release/actions?query=workflow%3A%22Release+-+Orchestrate+Overall+Release+Phases%22)) job has the way of ordering the release by utilizing the concept of phases.
 Currently there are several phases, representing an order of projects, which we can execute in parallel, as long as their dependent projects have been released. Projects in lower phases are those, on which projects from higher phase will depend.
 
-* Phase 1 - releases of:
+* Phase 1:
   * [che-code](https://github.com/che-incubator/che-code), 
   * [che-machine-exec](https://github.com/eclipse-che/che-machine-exec), 
-  * [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry), 
   * [che-dashboard](https://github.com/eclipse-che/che-dashboard), 
-  * [che-e2e](https://github.com/eclipse/che), 
   * [che-server](https://github.com/eclipse-che/che-server);
 * then creation of branches for:
   * [configbump](https://github.com/che-incubator/configbump),
-  * [kubernetes-image-puller](https://github.com/che-incubator/kubernetes-image-puller),
-  * [che-backup-server-rest](https://github.com/che-dockerfiles/che-backup-server-rest)
+  * [kubernetes-image-puller](https://github.com/che-incubator/kubernetes-image-puller)
 
-* Phase 2 - [che-theia](https://github.com/eclipse-che/che-theia) - depends on [che-server](https://github.com/eclipse-che/che-server)
+* Phase 2:
+  * [che-e2e](https://github.com/eclipse/che), 
+  * [che-plugin-registry](https://github.com/eclipse-che/che-plugin-registry)
 
-* Phase 3 - [che-plugin-registry](https://github.com/eclipse-che/che-plugin-registry) - depends on [che-theia](https://github.com/eclipse-che/che-theia)
+* Phase 3:
+  * [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry)
 
-* Phase 4 - [che-operator](https://github.com/eclipse-che/che-operator) - depends on phases 1 to 4 and performs several e2e validation tests
+* Phase 4:
+  * [che-operator](https://github.com/eclipse-che/che-operator) - depends on phases 1 to 4 and performs several e2e validation tests
 
 The phases list is a comma-separated list (default, which includes all phases "1,2,3,4"). Removing certain phases is useful, when you rerun the orchestration job, and certain projects shouldn't be released again. 
 Note that this approach will change, once a new system will be implemented, where we can more clearly specify dependencies between workflows, using special types of GitHub action.

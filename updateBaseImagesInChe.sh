@@ -28,11 +28,10 @@ updateImagesInProject()
 }
 
 updateImagesInProject "eclipse-che/che-machine-exec" "main" "" &
-updateImagesInProject "eclipse-che/che-theia" "master" "" &
-updateImagesInProject "eclipse-che/che-devfile-registry" "master" "" &
-updateImagesInProject "eclipse-che/che-plugin-registry" "master" "" &
+updateImagesInProject "eclipse-che/che-devfile-registry" "main" "" &
+updateImagesInProject "eclipse-che/che-plugin-registry" "main" "" &
 updateImagesInProject "eclipse-che/che-dashboard" "main" "" &
 updateImagesInProject "che-incubator/chectl" "main" "" &
-updateImagesInProject "eclipse/che" "master" "" &
+updateImagesInProject "eclipse/che" "main" "" &
 updateImagesInProject "eclipse-che/che-operator" "main" "" &
 wait

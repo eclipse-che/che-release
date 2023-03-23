@@ -14,10 +14,10 @@ usage ()
   echo "Usage: $0  --version [CHE VERSION TO RELEASE] --parent-version [CHE PARENT VERSION] --phases [LIST OF PHASES]
 
 # Comma-separated phases to perform.
-#1: CheServer, MachineExec, DevfileRegistry, Dashboard, createBranches;
-#2: CheTheia;
-#3: ChePluginRegistry;
-#5: CheOperator;
+#1: Code, MachineExec, Dashboard, Server, createBranches;
+#2: E2E, PluginRegistry;
+#3: DevfileRegistry;
+#4: Operator;
 # Default: 1,2,3,4
 # Omit phases that have successfully run.
 "
@@ -87,10 +87,6 @@ releaseMachineExec() {
 
 releaseCheCode() {
     invokeAction che-incubator/che-code "Release Che Code" "34764281" "version=${CHE_VERSION}"
-}
-
-releaseCheTheia() {
-    invokeAction eclipse-che/che-theia "Release Che Theia" "5717988" "version=${CHE_VERSION}"
 }
 
 releaseDevfileRegistry() {
@@ -170,7 +166,6 @@ set +x
 if [[ ${PHASES} == *"1"* ]]; then
     releaseCheCode
     releaseMachineExec
-    releaseDevfileRegistry
     releaseDashboard
     releaseCheServer
     createBranches
@@ -181,50 +176,34 @@ verifyContainerExistsWithTimeout ${REGISTRY}/che-incubator/che-code:${CHE_VERSIO
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-machine-exec:${CHE_VERSION} 60
 # shellcheck disable=SC2086
-verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-devfile-registry:${CHE_VERSION} 60
-# shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-dashboard:${CHE_VERSION} 60
+# shellcheck disable=SC2086
+verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-server:${CHE_VERSION} 60
 # shellcheck disable=SC2086
 verifyBranchExistsWithTimeoutAndExit "https://github.com/che-incubator/configbump.git" ${BRANCH} 60
 # shellcheck disable=SC2086
 verifyBranchExistsWithTimeoutAndExit "https://github.com/che-incubator/kubernetes-image-puller.git" ${BRANCH} 60
 
-IMAGES_LIST=(
-    quay.io/eclipse/che-endpoint-watcher
-    quay.io/eclipse/che-keycloak
-    quay.io/eclipse/che-server
-)
-
-for image in "${IMAGES_LIST[@]}"; do
-    verifyContainerExistsWithTimeout "${image}:${CHE_VERSION}" 60
-done
-
 set +x
-# Release server (depends on dashboard)
+# Release e2e (depends on dashboard)
+# Release plugin registry (depends on machine-exec)
 if [[ ${PHASES} == *"2"* ]]; then
-    releaseCheTheia
     releaseCheE2E
-fi
-
-# shellcheck disable=SC2086
-if [[ ${PHASES} == *"2"* ]] || [[ ${PHASES} == *"5"* ]]; then
-  verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-theia:${CHE_VERSION} 60
-  verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-theia-dev:${CHE_VERSION} 60
-  verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-theia-endpoint-runtime-binary:${CHE_VERSION} 60
-  verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-e2e:${CHE_VERSION} 60
-fi
-
-# Release plugin-registry (depends on che-theia and machine-exec)
-if [[ ${PHASES} == *"3"* ]]; then
     releasePluginRegistry
 fi
+wait
 
 # shellcheck disable=SC2086
-if [[ ${PHASES} == *"3"* ]] || [[ ${PHASES} == *"5"* ]]; then
-  verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-plugin-registry:${CHE_VERSION} 30
+verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-plugin-registry:${CHE_VERSION} 30
+# Release devfile registry (depends on plugin registry)
+if [[ ${PHASES} == *"3"* ]]; then
+  releaseDevfileRegistry
 fi
+wait 
 
-# Release Che operator (create PRs)
+# shellcheck disable=SC2086
+verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-devfile-registry:${CHE_VERSION} 60
+# Create operator PRs (depends on devfile registry)
 set +x
 if [[ ${PHASES} == *"4"* ]]; then
     releaseCheOperator
