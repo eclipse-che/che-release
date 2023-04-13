@@ -88,10 +88,10 @@ jobs:
         run: |
             echo "BRANCH=${{ github.event.inputs.branch || env.DEFAULT_BRANCH }}" >> $GITHUB_ENV
             echo "REPOS=${{ github.event.inputs.repos || env.DEFAULT_REPOS }}" >> $GITHUB_ENV
-            echo ::set-output name=GOT_REPO::false
+            echo GOT_REPO=false >> $GITHUB_OUTPUT
             for r in $(echo ${{ github.event.inputs.repos || env.DEFAULT_REPOS }} | tr "," "\n"); do
               if [[ $r == "${{ matrix.projects.repo }}" ]]; then
-                echo ::set-output name=GOT_REPO::true
+                echo GOT_REPO=true >> $GITHUB_OUTPUT
                 break
               fi
             done
@@ -151,13 +151,13 @@ jobs:
         id: SETUP_PR_LINK
         shell: bash
         run: |
-            echo ::set-output name=GOT_PR::false
+            echo GOT_PR=false >> $GITHUB_OUTPUT
             if [[ -f /tmp/${{ matrix.projects.repo }}/log.txt ]]; then
               URL=$(grep "${{ matrix.projects.repo }}/pull/" /tmp/${{ matrix.projects.repo }}/log.txt 2>/dev/null || true)
               if [[ $URL ]]; then 
                 echo "$URL"
                 echo "PR_URL=\"$URL\"" >> $GITHUB_ENV
-                echo ::set-output name=GOT_PR::true
+                echo GOT_PR=true >> $GITHUB_OUTPUT
               fi
             fi
       - name: Create MM message
