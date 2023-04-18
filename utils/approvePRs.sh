@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2022 Red Hat, Inc.
+# Copyright (c) 2022-2023 Red Hat, Inc.
 # This program and the accompanying materials are made
 # available under the terms of the Eclipse Public License 2.0
 # which is available at https://www.eclipse.org/legal/epl-2.0/
@@ -10,9 +10,6 @@
 # attempt to approve generated PRs via GH api
 # will fail if GH token not exported first
 
-# removed: old projects
-# che-dockerfiles/che-backup-server-rest \
-# che-incubator/workspace-data-sync \
 # list copied from .github/workflows/update-base-images.yml
 DEFAULT_REPOS="\
 che-incubator/chectl \

@@ -9,10 +9,7 @@ on:
       repos:
         description: 'List of repos to check for updates, comma-separated'
         required: true
-        # removed: old projects
-        # che-dockerfiles/che-backup-server-rest, 
-        # che-incubator/workspace-data-sync, 
-        #TODO when adding/removing from this list, see lists below in this file and also in ../../utils/approvePRs.sh
+        #TODO when adding/removing from this list, see lists below in this file and also in ../../utils/approvePRs.sh and ../../utils/check-branches.sh
         default: '
         che-incubator/chectl, 
         che-incubator/che-code, 
@@ -41,9 +38,6 @@ jobs:
       fail-fast: false
       matrix: 
         projects:
-          # removed: old projects
-          # - { repo: "che-dockerfiles/che-backup-server-rest", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
-          # - { repo: "che-incubator/workspace-data-sync", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/chectl", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/che-code", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
           - { repo: "che-incubator/configbump", user: "CHE_INCUBATOR_BOT_GITHUB_TOKEN", commandFlags: "-maxdepth 3 -f *Dockerfile --pr" }
@@ -65,9 +59,6 @@ jobs:
         shell: bash
         env:
           DEFAULT_BRANCH: 'main'
-          # removed: old projects
-          # che-dockerfiles/che-backup-server-rest, 
-          # che-incubator/workspace-data-sync, 
           DEFAULT_REPOS: '
           che-incubator/chectl, 
           che-incubator/che-code, 
