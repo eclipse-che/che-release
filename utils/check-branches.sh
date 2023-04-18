@@ -9,7 +9,6 @@ SCRIPTS_DIR=$(cd "$(dirname "$0")"; pwd)
 source ${SCRIPTS_DIR}/util.sh
 
 REPO_LIST=(
-    che-dockerfiles/che-backup-server-rest
     che-incubator/chectl
     che-incubator/configbump
     che-incubator/kubernetes-image-puller
@@ -20,7 +19,6 @@ REPO_LIST=(
     eclipse-che/che-plugin-registry
     eclipse-che/che-server
     eclipse/che
-    eclipse/che-docs
 )
 
 MISSING_BRANCHES=

@@ -43,7 +43,6 @@ The projects that are covered by this workflow release container images:
 Additionally, these slower-moving projects perform branch creation every sprint:
 - [configbump](https://github.com/che-incubator/configbump)
 - [kubernetes-image-puller](https://github.com/che-incubator/kubernetes-image-puller)
-- [che-backup-server-rest](https://github.com/che-dockerfiles/che-backup-server-rest)
 
 Che Operator requires manual verifications by Deploy team (and also various tests run against running Che, so we have a chance to see if it functions). When everything has been verified, after the merging of operator PRs the following projects workflows will be triggered automatically.
 - [chectl](https://github.com/che-incubator/chectl) - release artifact is a set of binaries, published to [Releases page]https://github.com/che-incubator/chectl/releases 
