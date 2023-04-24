@@ -22,7 +22,7 @@ jobs:
 
         SCRIPT_OUTPUT=$(./utils/check-branches.sh "${BRANCH}")
         if [[ $? == 1 ]]; then
-          echo "${SCRIPT_OUTPUT} >> ${GITHUB_OUTPUT}"
+          echo "${SCRIPT_OUTPUT}" >> ${GITHUB_OUTPUT}
         fi
     - name: Create success message
       run: |
