@@ -36,6 +36,7 @@ set -e
 
 if [ -n "${MISSING_BRANCHES}" ];then
     echo "[ERROR] Branch ${BRANCH} is not present in following projects: ${MISSING_BRANCHES}"
+    exit 1
 else
     echo "[INFO] Branch ${BRANCH} is present in all $numprojects Che projects"
 fi
