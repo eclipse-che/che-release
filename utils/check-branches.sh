@@ -9,15 +9,6 @@ SCRIPTS_DIR=$(cd "$(dirname "$0")"; pwd)
 source ${SCRIPTS_DIR}/util.sh
 
 REPO_LIST=(
-    che-incubator/chectl
-    che-incubator/configbump
-    che-incubator/kubernetes-image-puller
-    eclipse-che/che-dashboard
-    eclipse-che/che-devfile-registry
-    eclipse-che/che-machine-exec
-    eclipse-che/che-operator
-    eclipse-che/che-plugin-registry
-    eclipse-che/che-server
     eclipse/che
 )
 

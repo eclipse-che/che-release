@@ -76,7 +76,7 @@ verifyBranchExistsWithTimeout()
         branchExists=$(git ls-remote --heads "${this_repo}" "${this_branch}" | wc -l)
         if [[ ${branchExists} -eq 1 ]]; then echo " found."; return 0; break; fi
         (( count=count+1 ))
-        sleep 20s
+        sleep 1s
         echo ""
     done
     # or report an error
