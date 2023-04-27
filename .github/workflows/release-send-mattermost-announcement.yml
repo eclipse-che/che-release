@@ -32,7 +32,7 @@ jobs:
     - name: Create failure message
       if: ${{ failure() }}
       run: |
-        echo "{\"text\":\":che-logo: Che ${{ github.event.inputs.version }} release final checks have failed:\n\n failed: https://github.com/eclipse-che/che-release/actions/workflows/release-send-mattermost-announcement.yml '\n')}}.\"}" > mattermost.json
+        echo "{\"text\":\":che-logo: Che ${{ github.event.inputs.version }} release final checks have failed:\n\n failed: https://github.com/eclipse-che/che-release/actions/workflows/release-send-mattermost-announcement.yml.\"}" > mattermost.json
     - name: Send message
       if: ${{ success() }} || ${{ failure() }}
       uses: mattermost/action-mattermost-notify@1.1.0
