@@ -194,6 +194,7 @@ fi
 wait
 
 # shellcheck disable=SC2086
+verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-e2e:${CHE_VERSION} 30
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-plugin-registry:${CHE_VERSION} 30
 # Release devfile registry (depends on plugin registry)
 if [[ ${PHASES} == *"3"* ]]; then
