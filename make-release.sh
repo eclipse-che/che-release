@@ -14,8 +14,8 @@ usage ()
   echo "Usage: $0  --version [CHE VERSION TO RELEASE] --parent-version [CHE PARENT VERSION] --phases [LIST OF PHASES]
 
 # Comma-separated phases to perform.
-#1: Code, MachineExec, Dashboard, Server, createBranches;
-#2: E2E, PluginRegistry;
+#1: Code, MachineExec, Server, createBranches;
+#2: E2E, PluginRegistry, Dashboard;
 #3: DevfileRegistry;
 #4: Operator;
 # Default: 1,2,3,4
@@ -87,6 +87,11 @@ releaseMachineExec() {
 
 releaseCheCode() {
     invokeAction che-incubator/che-code "Release Che Code" "34764281" "version=${CHE_VERSION}"
+}
+
+
+releaseDevworkspaceGenerator() {
+    invokeAction eclipse-che/che-devfile-registry "Release Che Devworkspace Generator" "TODO->WORKFLOW-ID" "version=${CHE_VERSION}"
 }
 
 releaseDevfileRegistry() {
@@ -168,6 +173,7 @@ if [[ ${PHASES} == *"1"* ]]; then
     releaseMachineExec
     releaseDashboard
     releaseCheServer
+    releaseDevworkspaceGenerator
     createBranches
 fi
 wait
@@ -185,7 +191,7 @@ verifyBranchExistsWithTimeoutAndExit "https://github.com/che-incubator/configbum
 verifyBranchExistsWithTimeoutAndExit "https://github.com/che-incubator/kubernetes-image-puller.git" ${BRANCH} 60
 
 set +x
-# Release e2e (depends on dashboard)
+# Release e2e (depends on che-server, devworkspace-generator)
 # Release plugin registry (depends on machine-exec)
 if [[ ${PHASES} == *"2"* ]]; then
     releaseCheE2E

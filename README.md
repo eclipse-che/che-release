@@ -57,18 +57,18 @@ Currently there are several phases, representing an order of projects, which we 
 * Phase 1:
   * [che-code](https://github.com/che-incubator/che-code), 
   * [che-machine-exec](https://github.com/eclipse-che/che-machine-exec), 
-  * [che-dashboard](https://github.com/eclipse-che/che-dashboard), 
   * [che-server](https://github.com/eclipse-che/che-server);
+  * [devworkspace-generator](https://github.com/eclipse-che/che-devfile-registry/tree/main/tools/devworkspace-generator)
 * then creation of branches for:
   * [configbump](https://github.com/che-incubator/configbump),
   * [kubernetes-image-puller](https://github.com/che-incubator/kubernetes-image-puller)
 
 * Phase 2:
-  * [che-e2e](https://github.com/eclipse/che), 
-  * [che-plugin-registry](https://github.com/eclipse-che/che-plugin-registry)
+  * [che-e2e](https://github.com/eclipse/che) - depends on devworkspace-generator, che-server (typescript dto)
+  * [che-plugin-registry](https://github.com/eclipse-che/che-plugin-registry) - depends on che-machine-exec
 
 * Phase 3:
-  * [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry)
+  * [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry) - depends on plugin-registry, devworkspace-generator
 
 * Phase 4:
   * [che-operator](https://github.com/eclipse-che/che-operator) - depends on phases 1 to 3 and performs several e2e validation tests
