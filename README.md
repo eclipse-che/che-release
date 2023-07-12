@@ -66,6 +66,7 @@ Currently there are several phases, representing an order of projects, which we 
 * Phase 2:
   * [che-e2e](https://github.com/eclipse/che) - depends on devworkspace-generator, che-server (typescript dto)
   * [che-plugin-registry](https://github.com/eclipse-che/che-plugin-registry) - depends on che-machine-exec
+  * [che-dashboard](https://github.com/eclipse-che/che-dashboard) - depends on devworkspace-generator
 
 * Phase 3:
   * [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry) - depends on plugin-registry, devworkspace-generator
