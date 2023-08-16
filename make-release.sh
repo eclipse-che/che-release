@@ -186,7 +186,8 @@ verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-server:${CHE_VE
 verifyBranchExistsWithTimeoutAndExit "https://github.com/che-incubator/configbump.git" ${BRANCH} 60
 # shellcheck disable=SC2086
 verifyBranchExistsWithTimeoutAndExit "https://github.com/che-incubator/kubernetes-image-puller.git" ${BRANCH} 60
-
+# shellcheck disable=SC2086
+verifyNpmJsPackageExistsWithTimeoutAndExit "@eclipse-che/che-devworkspace-generator@7.70.0" 60
 set +x
 # Release e2e (depends on che-server, devworkspace-generator)
 # Release plugin registry (depends on machine-exec)
