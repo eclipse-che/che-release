@@ -91,7 +91,7 @@ releaseCheCode() {
 
 
 releaseDevworkspaceGenerator() {
-    invokeAction eclipse-che/che-devfile-registry "Release Che Devworkspace Generator" "TODO->WORKFLOW-ID" "version=${CHE_VERSION}"
+    invokeAction eclipse-che/che-devfile-registry "Release Che Devworkspace Generator" "67742638" "version=${CHE_VERSION}"
 }
 
 releaseDevfileRegistry() {
