@@ -14,8 +14,8 @@ usage ()
   echo "Usage: $0  --version [CHE VERSION TO RELEASE] --parent-version [CHE PARENT VERSION] --phases [LIST OF PHASES]
 
 # Comma-separated phases to perform.
-#1: Code, MachineExec, Dashboard, Server, createBranches;
-#2: E2E, PluginRegistry;
+#1: Code, MachineExec, Server, devworkspace-generator, createBranches;
+#2: E2E, PluginRegistry, Dashboard;
 #3: DevfileRegistry;
 #4: Operator;
 # Default: 1,2,3,4
@@ -87,6 +87,11 @@ releaseMachineExec() {
 
 releaseCheCode() {
     invokeAction che-incubator/che-code "Release Che Code" "34764281" "version=${CHE_VERSION}"
+}
+
+
+releaseDevworkspaceGenerator() {
+    invokeAction eclipse-che/che-devfile-registry "Release Che Devworkspace Generator" "67742638" "version=${CHE_VERSION}"
 }
 
 releaseDevfileRegistry() {
@@ -166,8 +171,8 @@ set +x
 if [[ ${PHASES} == *"1"* ]]; then
     releaseCheCode
     releaseMachineExec
-    releaseDashboard
     releaseCheServer
+    releaseDevworkspaceGenerator
     createBranches
 fi
 wait
@@ -176,26 +181,29 @@ verifyContainerExistsWithTimeout ${REGISTRY}/che-incubator/che-code:${CHE_VERSIO
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-machine-exec:${CHE_VERSION} 60
 # shellcheck disable=SC2086
-verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-dashboard:${CHE_VERSION} 60
-# shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-server:${CHE_VERSION} 60
 # shellcheck disable=SC2086
 verifyBranchExistsWithTimeoutAndExit "https://github.com/che-incubator/configbump.git" ${BRANCH} 60
 # shellcheck disable=SC2086
 verifyBranchExistsWithTimeoutAndExit "https://github.com/che-incubator/kubernetes-image-puller.git" ${BRANCH} 60
-
+# shellcheck disable=SC2086
+verifyNpmJsPackageExistsWithTimeoutAndExit "@eclipse-che/che-devworkspace-generator@${CHE_VERSION}" 60
 set +x
-# Release e2e (depends on dashboard)
+# Release e2e (depends on che-server, devworkspace-generator)
 # Release plugin registry (depends on machine-exec)
 if [[ ${PHASES} == *"2"* ]]; then
     releaseCheE2E
     releasePluginRegistry
+    releaseDashboard
 fi
 wait
 
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-e2e:${CHE_VERSION} 30
+# shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-plugin-registry:${CHE_VERSION} 30
+# shellcheck disable=SC2086
+verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-dashboard:${CHE_VERSION} 60
 # Release devfile registry (depends on plugin registry)
 if [[ ${PHASES} == *"3"* ]]; then
   releaseDevfileRegistry

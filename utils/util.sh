@@ -145,3 +145,51 @@ verifyContainerExistsWithTimeout()
         exit 1;
     fi
 }
+
+
+# for a given url of project hosten on NPMJS, check if it exists
+# package name must be in format "<scope>/name@version"
+# e.g. "@eclipse-che/che-devworkspace-generator@7.70.0"
+verifyNpmJsPackageExists()
+{
+    this_package=${1}
+    this_name="${this_package%@*}"
+    this_version="${this_package##*@}"
+    registry_json="$(curl -s https://registry.npmjs.org/${this_name}/)"
+    if echo "$registry_json" | jq -e '."versions"."'${this_version}'"'; then
+        echo "[INFO] Found ${this_package}"
+        packageExists=1
+    else
+        # echo "[INFO] Did not find ${this_package}"
+        packageExists=0
+    fi
+}
+
+verifyNpmJsPackagexistsWithTimeout()
+{
+    this_package=$1
+    this_timeout=$2
+    packageExists=0
+    count=1
+    (( timeout_intervals=this_timeout*3 ))
+    while [[ $count -le $timeout_intervals ]]; do # echo $count
+        echo "       [$count/$timeout_intervals] Verify ${1} exists..."
+        # check if the package exists
+        verifyNpmJsPackageExists "$1"
+        if [[ ${containerExists} -eq 1 ]]; then break; fi
+        (( count=count+1 ))
+        sleep 20s
+    done
+    # or report an error
+    if [[ ${packageExists} -eq 0 ]]; then
+        echo "[ERROR] Did not find ${1} after ${this_timeout} minutes - script must exit!"
+        exit 1;
+    fi
+}
+
+verifyNpmJsPackageExistsWithTimeoutAndExit() {
+    verifyNpmJsPackagexistsWithTimeout "$@"
+    if [[ $? -gt 0 ]]; then
+        exit 1
+    fi
+}
