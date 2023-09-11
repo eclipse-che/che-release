@@ -1,0 +1,44 @@
+# This Workflow announces a release in Eclipse Mattermost to https://mattermost.eclipse.org/eclipse/channels/eclipse-che-releases
+name: Release - Check for unmerged PRs
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The version being released. Should be in format 7.y'
+        required: true
+        default: ''
+      versionNext:
+        description: 'The next version after the release. Should be in format 7.y+1'
+        required: true
+        default: ''
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - uses: actions/checkout@v4
+      with: 
+        fetch-depth: 0
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11' 
+    - name: install yq jq 
+      run: |
+        python -m ensurepip --upgrade; pip install yq jq
+    - name: Check for unmerged PRs
+      id: check
+      run: |
+        curl -sSLkO https://raw.githubusercontent.com/eclipse/che/main/.repositories.yaml
+
+        releaseVersions="${{ github.event.inputs.version }}|${{ github.event.inputs.versionNext }}"
+        for d in $(yq -r '.[][]|select(.useCheReleaseLifecycle==true)|.url' .repositories.yaml | sed -r -e "s#https://github.com/##" -e "s#/\$##"); do \
+            echo; echo $d; \
+            gh api repos/${d}/pulls?state=open --jq '.[]|(.html_url + "\t" + .title)' | grep -E "release|$releaseVersions"; \
+        done
+
+        # check unmerged community-operators-prod PRs for che-operator
+        d="redhat-openshift-ecosystem/community-operators-prod"
+        echo; echo $d; \
+        # search for more with: gh api repos/${d}/pulls?state=open\&sort=updated\&direction=desc\&per_page=100 ...
+        gh api repos/${d}/pulls?state=open --jq '.[]|select(.title|contains("operator eclipse-che"))|(.html_url+"\t"+.title)'
