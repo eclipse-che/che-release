@@ -27,16 +27,19 @@ jobs:
       run: |
         curl -sSLkO https://raw.githubusercontent.com/eclipse/che/main/.repositories.yaml
 
-        if [[ ${{ github.event.inputs.version }} ]]; then
+        releaseVersionString=""
+        if [[ ${{ github.event.inputs.version }} != "" ]]; then
           [[ $BRANCH =~ ^([0-9]+)\.([0-9]+) ]] && BASE=${BASH_REMATCH[1]}; NEXT=${BASH_REMATCH[2]}; (( NEXT=NEXT+1 )) # for BRANCH=7.74, get BASE=7, NEXT=75
           versionNext="${BASE}.${NEXT}"
           releaseVersionString="|${{ github.event.inputs.version }}|${versionNext}"
         fi
+        grepString="chore: Bump to |release${releaseVersionString}"
+        echo "Searching for open pull requests that match '$grepString' ..."
         foundPRs=0
         for d in $(yq -r '.[][]|select(.useCheReleaseLifecycle==true)|.url' .repositories.yaml | sed -r -e "s#https://github.com/##" -e "s#/\$##"); do
             PRs=""
             echo; echo $d
-            PRs=$(gh api repos/${d}/pulls?state=open --jq '.[]|(.html_url + "\t" + .title)' | grep -E "chore: Bump to |release${releaseVersionString}" || true)
+            PRs=$(gh api repos/${d}/pulls?state=open --jq '.[]|(.html_url + "\t" + .title)' | grep -E "$grepString" || true)
             if [[ $PRs ]]; then
               echo "$PRs"
               (( foundPRs = foundPRs + 1 ))
