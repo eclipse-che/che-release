@@ -123,7 +123,7 @@ releaseCheOperator() {
 }
 
 setupGitconfig() {
-  # TODO change it to someone else?
+  ne else?
   git config --global user.name "Mykhailo Kuznietsov"
   git config --global user.email mkuznets@redhat.com
 

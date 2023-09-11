@@ -37,8 +37,8 @@ jobs:
             PRs=""
             echo; echo $d
             PRs=$(gh api repos/${d}/pulls?state=open --jq '.[]|(.html_url + "\t" + .title)' | grep -E "chore: Bump to |release|$releaseVersions" || true)
-            echo "$PRs"
             if [[ $PRs ]]; then
+              echo "$PRs"
               (( foundPRs = foundPRs + 1 ))
             fi
         done
@@ -48,8 +48,8 @@ jobs:
         echo; echo $d; \
         # search for more with: gh api repos/${d}/pulls?state=open\&sort=updated\&direction=desc\&per_page=100 ...
         PRs=$(gh api repos/${d}/pulls?state=open --jq '.[]|select(.title|contains("operator eclipse-che"))|(.html_url+"\t"+.title)')
-        echo "$PRs"
         if [[ $PRs ]]; then
+          echo "$PRs"
           (( foundPRs = foundPRs + 1 ))
         fi
 
