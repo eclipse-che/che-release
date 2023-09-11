@@ -32,13 +32,25 @@ jobs:
         curl -sSLkO https://raw.githubusercontent.com/eclipse/che/main/.repositories.yaml
 
         releaseVersions="${{ github.event.inputs.version }}|${{ github.event.inputs.versionNext }}"
-        for d in $(yq -r '.[][]|select(.useCheReleaseLifecycle==true)|.url' .repositories.yaml | sed -r -e "s#https://github.com/##" -e "s#/\$##"); do \
-            echo; echo $d; \
-            gh api repos/${d}/pulls?state=open --jq '.[]|(.html_url + "\t" + .title)' | grep -E "chore: Bump to |release|$releaseVersions" || true; \
+        foundPRs=0
+        for d in $(yq -r '.[][]|select(.useCheReleaseLifecycle==true)|.url' .repositories.yaml | sed -r -e "s#https://github.com/##" -e "s#/\$##"); do
+            PRs=""
+            echo; echo $d
+            PRs=$(gh api repos/${d}/pulls?state=open --jq '.[]|(.html_url + "\t" + .title)' | grep -E "chore: Bump to |release|$releaseVersions" || true)
+            echo "$PRs"
+            if [[ $PRs ]]; then
+              (( foundPRs = foundPRs + 1 ))
+            fi
         done
 
         # check unmerged community-operators-prod PRs for che-operator
         d="redhat-openshift-ecosystem/community-operators-prod"
         echo; echo $d; \
         # search for more with: gh api repos/${d}/pulls?state=open\&sort=updated\&direction=desc\&per_page=100 ...
-        gh api repos/${d}/pulls?state=open --jq '.[]|select(.title|contains("operator eclipse-che"))|(.html_url+"\t"+.title)'
+        PRs=$(gh api repos/${d}/pulls?state=open --jq '.[]|select(.title|contains("operator eclipse-che"))|(.html_url+"\t"+.title)')
+        echo "$PRs"
+        if [[ $PRs ]]; then
+          (( foundPRs = foundPRs + 1 ))
+        fi
+
+        echo; echo "Found $foundPRs open pull requests!"; exit $foundPRs
