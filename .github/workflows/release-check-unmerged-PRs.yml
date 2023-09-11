@@ -7,10 +7,6 @@ on:
         description: 'The version being released. Should be in format 7.y'
         required: true
         default: ''
-      versionNext:
-        description: 'The next version after the release. Should be in format 7.y+1'
-        required: true
-        default: ''
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -31,12 +27,16 @@ jobs:
       run: |
         curl -sSLkO https://raw.githubusercontent.com/eclipse/che/main/.repositories.yaml
 
-        releaseVersions="${{ github.event.inputs.version }}|${{ github.event.inputs.versionNext }}"
+        if [[ ${{ github.event.inputs.version }} ]]; then
+          [[ $BRANCH =~ ^([0-9]+)\.([0-9]+) ]] && BASE=${BASH_REMATCH[1]}; NEXT=${BASH_REMATCH[2]}; (( NEXT=NEXT+1 )) # for BRANCH=7.74, get BASE=7, NEXT=75
+          versionNext="${BASE}.${NEXT}"
+          releaseVersionString="|${{ github.event.inputs.version }}|${versionNext}"
+        fi
         foundPRs=0
         for d in $(yq -r '.[][]|select(.useCheReleaseLifecycle==true)|.url' .repositories.yaml | sed -r -e "s#https://github.com/##" -e "s#/\$##"); do
             PRs=""
             echo; echo $d
-            PRs=$(gh api repos/${d}/pulls?state=open --jq '.[]|(.html_url + "\t" + .title)' | grep -E "chore: Bump to |release|$releaseVersions" || true)
+            PRs=$(gh api repos/${d}/pulls?state=open --jq '.[]|(.html_url + "\t" + .title)' | grep -E "chore: Bump to |release${releaseVersionString}" || true)
             if [[ $PRs ]]; then
               echo "$PRs"
               (( foundPRs = foundPRs + 1 ))
