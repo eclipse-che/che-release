@@ -29,8 +29,9 @@ jobs:
 
         releaseVersionString=""
         if [[ ${{ github.event.inputs.version }} != "" ]]; then
-          [[ $BRANCH =~ ^([0-9]+)\.([0-9]+) ]] && BASE=${BASH_REMATCH[1]}; NEXT=${BASH_REMATCH[2]}; (( NEXT=NEXT+1 )) # for BRANCH=7.74, get BASE=7, NEXT=75
-          versionNext="${BASE}.${NEXT}"
+          VER_Y="${{ github.event.inputs.version }}"
+          [[ $VER_Y =~ ^([0-9]+)\.([0-9]+) ]] && VER_X=${BASH_REMATCH[1]}; NEXT=${BASH_REMATCH[2]}; (( NEXT=NEXT+1 )) # for BRANCH=7.74, get BASE=7, NEXT=75
+          versionNext="${VER_X}.${NEXT}"
           releaseVersionString="|${{ github.event.inputs.version }}|${versionNext}"
         fi
         grepString="chore: Bump to |release${releaseVersionString}"
