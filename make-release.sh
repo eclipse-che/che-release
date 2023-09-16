@@ -184,7 +184,7 @@ set -e
 #################### PHASE 1 ####################
 
 # Release projects that don't depend on other projects
-set +x
+set +x 
 if [[ ${PHASES} == *"1"* ]]; then
     releaseCheCode
     releaseConfigbump
