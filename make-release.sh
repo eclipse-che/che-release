@@ -14,16 +14,18 @@ usage ()
   echo "Usage: $0  --version [CHE VERSION TO RELEASE] --parent-version [CHE PARENT VERSION] --phases [LIST OF PHASES]
 
 # Comma-separated phases to perform.
-#1: Code, MachineExec, Server, devworkspace-generator, createBranches;
+#1: Code, Configbump, MachineExec, Server, devworkspace-generator, createBranches (kubernetes-image-puller);
 #2: E2E, PluginRegistry, Dashboard;
 #3: DevfileRegistry;
 #4: Operator;
 # Default: 1,2,3,4
 # Omit phases that have successfully run.
 "
-  echo "Example: $0 --version 7.29.0 --phases 1,2,3,4"; echo
+  echo "Example: $0 --version 7.75.0 --phases 1,2,3,4"; echo
   exit 1
 }
+
+#################### SETUP ####################
 
 checkForBlockerIssues()
 {
@@ -56,6 +58,22 @@ checkForBlockerIssues()
     fi
 }
 
+setupGitconfig() {
+  ne else?
+  git config --global user.name "Mykhailo Kuznietsov"
+  git config --global user.email mkuznets@redhat.com
+
+  # hub CLI configuration
+  git config --global push.default matching
+
+  # suppress warnings about how to reconcile divergent branches
+  git config --global pull.ff only 
+
+  # NOTE when invoking action from che-incubator/* repos (not eclipse/che* repos), must use CHE_INCUBATOR_BOT_GITHUB_TOKEN
+  # default to CHE_BOT GH token
+  export GITHUB_TOKEN="${CHE_BOT_GITHUB_TOKEN}"
+}
+
 evaluateCheVariables() {
     echo "Che version: ${CHE_VERSION}"
     # derive branch from version
@@ -81,61 +99,57 @@ evaluateCheVariables() {
     echo "Release Process Phases: '${PHASES}'"
 }
 
-releaseMachineExec() {
-    invokeAction eclipse-che/che-machine-exec "Release Che Machine Exec" "7369994" "version=${CHE_VERSION}"
-}
+#################### PHASE 1 ####################
 
 releaseCheCode() {
     invokeAction che-incubator/che-code "Release Che Code" "34764281" "version=${CHE_VERSION}"
 }
 
-
-releaseDevworkspaceGenerator() {
-    invokeAction eclipse-che/che-devfile-registry "Release Che Devworkspace Generator" "67742638" "version=${CHE_VERSION}"
+# TODO: once https://github.com/che-incubator/configbump/pull/98 is merged, compute action ID with method util.sh#computeWorkflowId()
+releaseConfigbump() {
+    invokeAction che-incubator/configbump "Release Che Configbump" "?????" "version=${CHE_VERSION}"
 }
 
-releaseDevfileRegistry() {
-    invokeAction eclipse-che/che-devfile-registry "Release Che Devfile Registry" "4191260" "version=${CHE_VERSION}"
-}
-releasePluginRegistry() {
-    invokeAction eclipse-che/che-plugin-registry "Release Che Plugin Registry" "4191251" "version=${CHE_VERSION}"
-}
-
-createBranches() {
-    invokeAction che-incubator/configbump "Create branch" "11029799" "branch=${BRANCH}"
-    invokeAction che-incubator/kubernetes-image-puller "Create branch" "5409996" "branch=${BRANCH}"
-}
-
-releaseDashboard() {
-    invokeAction eclipse-che/che-dashboard "Release Che Dashboard" "3152474" "version=${CHE_VERSION}"
-}
-
-releaseCheE2E() {
-    invokeAction eclipse/che "Release Che E2E" "5536792" "version=${CHE_VERSION}"
+releaseMachineExec() {
+    invokeAction eclipse-che/che-machine-exec "Release Che Machine Exec" "7369994" "version=${CHE_VERSION}"
 }
 
 releaseCheServer() {
     invokeAction eclipse-che/che-server "Release Che Server" "9230035" "version=${CHE_VERSION},releaseParent=${RELEASE_CHE_PARENT},versionParent=${VERSION_CHE_PARENT}"
 }
 
-releaseCheOperator() {
-    invokeAction eclipse-che/che-operator "Release Che Operator" "3593082" "version=${CHE_VERSION}"
+releaseDevworkspaceGenerator() {
+    invokeAction eclipse-che/che-devfile-registry "Release Che Devworkspace Generator" "67742638" "version=${CHE_VERSION}"
 }
 
-setupGitconfig() {
-  ne else?
-  git config --global user.name "Mykhailo Kuznietsov"
-  git config --global user.email mkuznets@redhat.com
+createBranches() {
+    invokeAction che-incubator/kubernetes-image-puller "Create branch" "5409996" "branch=${BRANCH}"
+}
 
-  # hub CLI configuration
-  git config --global push.default matching
+#################### PHASE 2 ####################
 
-  # suppress warnings about how to reconcile divergent branches
-  git config --global pull.ff only 
+releaseCheE2E() {
+    invokeAction eclipse/che "Release Che E2E" "5536792" "version=${CHE_VERSION}"
+}
 
-  # NOTE when invoking action from che-incubator/* repos (not eclipse/che* repos), must use CHE_INCUBATOR_BOT_GITHUB_TOKEN
-  # default to CHE_BOT GH token
-  export GITHUB_TOKEN="${CHE_BOT_GITHUB_TOKEN}"
+releasePluginRegistry() {
+    invokeAction eclipse-che/che-plugin-registry "Release Che Plugin Registry" "4191251" "version=${CHE_VERSION}"
+}
+
+releaseDashboard() {
+    invokeAction eclipse-che/che-dashboard "Release Che Dashboard" "3152474" "version=${CHE_VERSION}"
+}
+
+#################### PHASE 3 ####################
+
+releaseDevfileRegistry() {
+    invokeAction eclipse-che/che-devfile-registry "Release Che Devfile Registry" "4191260" "version=${CHE_VERSION}"
+}
+
+#################### PHASE 4 ####################
+
+releaseCheOperator() {
+    invokeAction eclipse-che/che-operator "Release Che Operator" "3593082" "version=${CHE_VERSION}"
 }
 
 while [[ "$#" -gt 0 ]]; do
@@ -159,17 +173,21 @@ chmod 0400 "$HOME/.ssh/id_rsa"
 ssh-keyscan github.com >> ~/.ssh/known_hosts
 set -x
 
+#################### SETUP ####################
+
 checkForBlockerIssues
 setupGitconfig
-
 evaluateCheVariables
 echo "BASH VERSION = $BASH_VERSION"
 set -e
+
+#################### PHASE 1 ####################
 
 # Release projects that don't depend on other projects
 set +x
 if [[ ${PHASES} == *"1"* ]]; then
     releaseCheCode
+    releaseConfigbump
     releaseMachineExec
     releaseCheServer
     releaseDevworkspaceGenerator
@@ -179,15 +197,18 @@ wait
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/che-incubator/che-code:${CHE_VERSION} 60
 # shellcheck disable=SC2086
+verifyContainerExistsWithTimeout ${REGISTRY}/che-incubator/configbump:${CHE_VERSION} 60
+# shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-machine-exec:${CHE_VERSION} 60
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-server:${CHE_VERSION} 60
 # shellcheck disable=SC2086
-verifyBranchExistsWithTimeoutAndExit "https://github.com/che-incubator/configbump.git" ${BRANCH} 60
-# shellcheck disable=SC2086
 verifyBranchExistsWithTimeoutAndExit "https://github.com/che-incubator/kubernetes-image-puller.git" ${BRANCH} 60
 # shellcheck disable=SC2086
 verifyNpmJsPackageExistsWithTimeoutAndExit "@eclipse-che/che-devworkspace-generator@${CHE_VERSION}" 60
+
+#################### PHASE 2 ####################
+
 set +x
 # Release e2e (depends on che-server, devworkspace-generator)
 # Release plugin registry (depends on machine-exec)
@@ -197,21 +218,25 @@ if [[ ${PHASES} == *"2"* ]]; then
     releaseDashboard
 fi
 wait
-
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-e2e:${CHE_VERSION} 30
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-plugin-registry:${CHE_VERSION} 30
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-dashboard:${CHE_VERSION} 60
+
+#################### PHASE 3 ####################
+
 # Release devfile registry (depends on plugin registry)
 if [[ ${PHASES} == *"3"* ]]; then
   releaseDevfileRegistry
 fi
 wait 
-
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-devfile-registry:${CHE_VERSION} 60
+
+#################### PHASE 4 ####################
+
 # Create operator PRs (depends on devfile registry)
 set +x
 if [[ ${PHASES} == *"4"* ]]; then
