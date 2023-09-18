@@ -25,24 +25,34 @@ Most of the projects that are part of the weekly release cycle are also united i
 
 With the exception of some projects, it allows to perform the bulk of the release process with 1 click, running following projects in the correct order, making them complete a full release process - pushing commits or pull request to respective repositories, deploying artifacts etc. 
 
-The projects that are covered by this workflow release container images:
+The projects that are covered by this workflow release container images versioned 7.yy.0 every sprint, split into 4 phases:
+
+**Phase 1**
+
+- [che-code](https://github.com/che-incubator/che-code) - https://quay.io/che-incubator/che-code
+- [configbump](https://github.com/che-incubator/configbump) - https://quay.io/che-incubator/configbump
+- [che-machine-exec](https://github.com/eclipse-che/che-machine-exec) - https://quay.io/eclipse/che-machine-exec
+- [che server](https://github.com/eclipse-che/che-server) - https://quay.io/eclipse/che-server
+
+**Phase 2**
 
 - [che-e2e](https://github.com/eclipse/che) - https://quay.io/eclipse/che-e2e
-- [che-code](https://github.com/che-incubator/che-code) - https://quay.io/che-incubator/che-code
-- [che-machine-exec](https://github.com/eclipse-che/che-machine-exec) - https://quay.io/eclipse/che-machine-exec
-- [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry) - https://quay.io/eclipse/che-devfile-registry
 - [che-plugin-registry](https://github.com/eclipse-che/che-plugin-registry) - https://quay.io/eclipse/che-plugin-registry
 - [che-dashboard](https://github.com/eclipse-che/che-dashboard) - https://quay.io/eclipse/che-dashboard
-- [che-operator](https://github.com/eclipse-che/che-operator) - https://quay.io/eclipse/che-operator. 
-- [che server](https://github.com/eclipse-che/che-server) - 
-  - https://quay.io/eclipse/che-endpoint-watcher,
-  - https://quay.io/eclipse/che-keycloak,
-  - https://quay.io/eclipse/che-postgres,
-  - https://quay.io/eclipse/che-server
 
-Additionally, these slower-moving projects perform branch creation every sprint:
-- [configbump](https://github.com/che-incubator/configbump)
+**Phase 3**
+
+- [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry) - https://quay.io/eclipse/che-devfile-registry 
+
+**Phase 4**
+
+- [che-operator](https://github.com/eclipse-che/che-operator) - https://quay.io/eclipse/che-operator
+
+As part of the first phase, [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry) also publishes the [devworkspace-generator](https://github.com/eclipse-che/che-devfile-registry/tree/main/tools/devworkspace-generator) to https://www.npmjs.com/package/@eclipse-che/che-devworkspace-generator
+
+This slow-moving project performs branch creation every sprint (but does not release a 7.yy.0 every sprint):
 - [kubernetes-image-puller](https://github.com/che-incubator/kubernetes-image-puller)
+
 
 Che Operator requires manual verifications by Deploy team (and also various tests run against running Che, so we have a chance to see if it functions). When everything has been verified, after the merging of operator PRs the following projects workflows will be triggered automatically.
 - [chectl](https://github.com/che-incubator/chectl) - release artifact is a set of binaries, published to [Releases page]https://github.com/che-incubator/chectl/releases 
@@ -51,31 +61,7 @@ Che Operator requires manual verifications by Deploy team (and also various test
 
 ## Release phases
 
-At the moment, [Release - Orchestrate Overall Release Phases]((https://github.com/eclipse-che/che-release/actions?query=workflow%3A%22Release+-+Orchestrate+Overall+Release+Phases%22)) job has the way of ordering the release by utilizing the concept of phases.
-Currently there are several phases, representing an order of projects, which we can execute in parallel, as long as their dependent projects have been released. Projects in lower phases are those, on which projects from higher phase will depend.
-
-* Phase 1:
-  * [che-code](https://github.com/che-incubator/che-code), 
-  * [che-machine-exec](https://github.com/eclipse-che/che-machine-exec), 
-  * [che-server](https://github.com/eclipse-che/che-server);
-  * [devworkspace-generator](https://github.com/eclipse-che/che-devfile-registry/tree/main/tools/devworkspace-generator)
-* then creation of branches for:
-  * [configbump](https://github.com/che-incubator/configbump),
-  * [kubernetes-image-puller](https://github.com/che-incubator/kubernetes-image-puller)
-
-* Phase 2:
-  * [che-e2e](https://github.com/eclipse/che) - depends on devworkspace-generator, che-server (typescript dto)
-  * [che-plugin-registry](https://github.com/eclipse-che/che-plugin-registry) - depends on che-machine-exec
-  * [che-dashboard](https://github.com/eclipse-che/che-dashboard) - depends on devworkspace-generator
-
-* Phase 3:
-  * [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry) - depends on plugin-registry, devworkspace-generator
-
-* Phase 4:
-  * [che-operator](https://github.com/eclipse-che/che-operator) - depends on phases 1 to 3 and performs several e2e validation tests
-
-The phases list is a comma-separated list (default, which includes all phases "1,2,3,4"). Removing certain phases is useful, when you rerun the orchestration job, and certain projects shouldn't be released again. 
-Note that this approach will change, once a new system will be implemented, where we can more clearly specify dependencies between workflows, using special types of GitHub action.
+The [Release - Orchestrate Overall Release Phases]((https://github.com/eclipse-che/che-release/actions?query=workflow%3A%22Release+-+Orchestrate+Overall+Release+Phases%22)) action runs [make-release.sh](https://github.com/eclipse-che/che-release/blob/main/make-release.sh) to release the various Che containers and packages in the correct order. This ensures that dependencies between containers or packages can be met. See [make-release.sh](https://github.com/eclipse-che/che-release/blob/main/make-release.sh) for these dependencies. The list of phases is above. 
 
 
 ## Release procedure
@@ -102,6 +88,6 @@ Note that this approach will change, once a new system will be implemented, wher
 --------------
 
 
-# Che release gotchas
+# Che release known issues
 
-* https://github.com/eclipse/che/issues/17178 - Changelog generation contains too much information
+None at this time.

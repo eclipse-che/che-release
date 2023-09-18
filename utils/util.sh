@@ -9,11 +9,12 @@ die_with()
 computeWorkflowId() {
     this_repo=$1
     this_action_name=$2
-    workflow_id=$(curl -sSL "https://api.github.com/repos/${this_repo}/actions/workflows" -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3+json" | jq --arg search_field "${this_action_name}" '.workflows[] | select(.name == $search_field).id'); # echo "workflow_id = $workflow_id"
+    workflow_id=$(curl -sSL "https://api.github.com/repos/${this_repo}/actions/workflows" -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3+json" | jq --arg search_field "${this_action_name}" '.workflows[] | select(.name == $search_field).id'); 
+    # echo "workflow_id = $workflow_id"
     if [[ ! $workflow_id ]]; then
         die_with "[ERROR] Could not compute workflow id from https://api.github.com/repos/${this_repo}/actions/workflows - check your GITHUB_TOKEN is active"
     fi
-    # echo "[INFO] Got workflow_id $workflow_id for $this_repo action '$this_action_name'"
+    echo "[INFO] Got workflow_id $workflow_id for $this_repo action '$this_action_name'"
 }
 
 # generic method to call a GH action and pass in a single var=val parameter
