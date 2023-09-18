@@ -105,9 +105,8 @@ releaseCheCode() {
     invokeAction che-incubator/che-code "Release Che Code" "34764281" "version=${CHE_VERSION}"
 }
 
-# TODO: once https://github.com/che-incubator/configbump/pull/98 is merged, compute action ID with method util.sh#computeWorkflowId()
 releaseConfigbump() {
-    invokeAction che-incubator/configbump "Release Che Configbump" "?????" "version=${CHE_VERSION}"
+    invokeAction che-incubator/configbump "Release Che Configbump" "69757177" "version=${CHE_VERSION}"
 }
 
 releaseMachineExec() {
