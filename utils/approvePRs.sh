@@ -63,11 +63,11 @@ for ownerRepo in $DEFAULT_REPOS; do
     # get open PRs, reported by che-incubator bot, with head.ref like pr-update-base-images-1651279364
     curl -sSL -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3+json" \
         "https://api.github.com/repos/${ownerRepo}/pulls?state=open&base=${BRANCH}" | jq -r \
-        '.[] | select((.user.login == "che-incubator-bot") or (.user.login == "che-bot")) | select(.head.ref|test("pr-update-base-images-.")) | [.user.login, .head.ref, ._links.self.href, ._links.html.href] | @tsv'
+        '.[] | select((.user.login == "che-incubator-bot") or (.user.login == "che-bot")) | select(.head.ref|test("pr-update-base-images-.|pr-main-to-")) | [.user.login, .head.ref, ._links.self.href, ._links.html.href] | @tsv'
     # process PRs
     unmerged_PRs_string="$(curl -sSL -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3+json" \
         "https://api.github.com/repos/${ownerRepo}/pulls?state=open&base=${BRANCH}" | jq -r \
-        '.[] | select((.user.login == "che-incubator-bot") or (.user.login == "che-bot")) | select(.head.ref|test("pr-update-base-images-.")) | ._links.self.href')"
+        '.[] | select((.user.login == "che-incubator-bot") or (.user.login == "che-bot")) | select(.head.ref|test("pr-update-base-images-.|pr-main-to-")) | ._links.self.href')"
     unmerged_PRs=($unmerged_PRs_string); # echo $unmerged_PRs_string; echo "${#unmerged_PRs[@]}"
 
     if [[ ${#unmerged_PRs[@]} -gt 0 ]]; then
