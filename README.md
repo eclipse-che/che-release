@@ -85,5 +85,5 @@ The [Release - Orchestrate Overall Release Phases]((https://github.com/eclipse-c
 
 # Che release known issues
 
-None at this time.
-
+* Enable slack notifications #[22551](https://github.com/eclipse/che/issues/22551)
+* Autorelease the Che Release Notes after chectl release #[22550](https://github.com/eclipse/che/issues/22550)
