@@ -27,37 +27,30 @@ With the exception of some projects, it allows to perform the bulk of the releas
 
 The projects that are covered by this workflow release container images versioned 7.yy.0 every sprint, split into 4 phases:
 
-**Phase 1**
-
-- [che-code](https://github.com/che-incubator/che-code) - https://quay.io/che-incubator/che-code
-- [configbump](https://github.com/che-incubator/configbump) - https://quay.io/che-incubator/configbump
-- [che-machine-exec](https://github.com/eclipse-che/che-machine-exec) - https://quay.io/eclipse/che-machine-exec
-- [che server](https://github.com/eclipse-che/che-server) - https://quay.io/eclipse/che-server
-
-**Phase 2**
-
-- [che-e2e](https://github.com/eclipse/che) - https://quay.io/eclipse/che-e2e
-- [che-plugin-registry](https://github.com/eclipse-che/che-plugin-registry) - https://quay.io/eclipse/che-plugin-registry
-- [che-dashboard](https://github.com/eclipse-che/che-dashboard) - https://quay.io/eclipse/che-dashboard
-
-**Phase 3**
-
-- [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry) - https://quay.io/eclipse/che-devfile-registry 
-
-**Phase 4**
-
-- [che-operator](https://github.com/eclipse-che/che-operator) - https://quay.io/eclipse/che-operator
-
-As part of the first phase, [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry) also publishes the [devworkspace-generator](https://github.com/eclipse-che/che-devfile-registry/tree/main/tools/devworkspace-generator) to https://www.npmjs.com/package/@eclipse-che/che-devworkspace-generator
-
-This slow-moving project performs branch creation every sprint (but does not release a 7.yy.0 every sprint):
-- [kubernetes-image-puller](https://github.com/che-incubator/kubernetes-image-puller)
-
+| Phase       | Project | Workflow Status | Quay or NPM Artifact |
+| :---        | :---    | :---            | :---       | 
+| **Phase 1** | [che-code](https://github.com/che-incubator/che-code) | [![Release](https://github.com/che-incubator/che-code/actions/workflows/release.yml/badge.svg)](https://github.com/che-incubator/che-code/actions/workflows/release.yml) | [che-code](https://quay.io/che-incubator/che-code) |
+| | [configbump](https://github.com/che-incubator/configbump) | [![Release](https://github.com/che-incubator/configbump/actions/workflows/release.yml/badge.svg)](https://github.com/che-incubator/configbump/actions/workflows/release.yml) | [configbump](https://quay.io/che-incubator/configbump) |
+| | [che-machine-exec](https://github.com/eclipse-che/che-machine-exec) | [![Release](https://github.com/eclipse-che/che-machine-exec/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse-che/che-machine-exec/actions/workflows/release.yml) | [che-machine-exec](https://quay.io/eclipse/che-machine-exec) |
+| | [che server](https://github.com/eclipse-che/che-server) | [![Release](https://github.com/eclipse-che/che-server/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse-che/che-server/actions/workflows/release.yml) | [che-server](https://quay.io/eclipse/che-server) |
+| | [devworkspace-generator](https://github.com/eclipse-che/che-devfile-registry/tree/main/tools/devworkspace-generator ) | [![Release](https://github.com/eclipse-che/che-devfile-registry/actions/workflows/devworkspace-generator-release.yml/badge.svg)](https://github.com/eclipse-che/che-devfile-registry/actions/workflows/devworkspace-generator-release.yml) | NPM [@eclipse-che/che-devworkspace-generator](https://www.npmjs.com/package/@eclipse-che/che-devworkspace-generator)
+| | [kubernetes-image-puller](https://github.com/che-incubator/kubernetes-image-puller) | [![Branch](https://github.com/che-incubator/kubernetes-image-puller/actions/workflows/make-branch.yaml/badge.svg)](https://github.com/che-incubator/kubernetes-image-puller/actions/workflows/make-branch.yaml) | [kubernetes-image-puller/branches](https://github.com/che-incubator/kubernetes-image-puller/branches/active)
+| | | 
+| **Phase 2** | [che-e2e](https://github.com/eclipse/che) | [![Release](https://github.com/eclipse/che/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse/che/actions/workflows/devworkspace-generator-release.yml) | [che-e2e](https://quay.io/eclipse/che-e2e) |
+| | [che-plugin-registry](https://github.com/eclipse-che/che-plugin-registry) | [![Release](https://github.com/eclipse-che/che-plugin-registry/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse-che/che-plugin-registry/actions/workflows/release.yml) | [che-plugin-registry](https://quay.io/eclipse/che-plugin-registry) |
+| | [che-dashboard](https://github.com/eclipse-che/che-dashboard) | [![release latest stable](https://github.com/eclipse-che/che-dashboard/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse-che/che-dashboard/actions/workflows/release.yml) | [che-dashboard](https://quay.io/eclipse/che-dashboard) |
+| | | 
+| **Phase 3** | [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry) | [![Release](https://github.com/eclipse-che/che-devfile-registry/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse-che/che-devfile-registry/actions/workflows/release.yml) | [che-devfile-registry](https://quay.io/eclipse/che-devfile-registry) |
+| | | 
+| **Phase 4** | [che-operator](https://github.com/eclipse-che/che-operator) | [![Release](https://github.com/eclipse-che/che-operator/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse-che/che-operator/actions/workflows/release.yml) | [che-operator](https://quay.io/eclipse/che-operator) |
 
 Che Operator requires manual verifications by Deploy team (and also various tests run against running Che, so we have a chance to see if it functions). When everything has been verified, after the merging of operator PRs the following projects workflows will be triggered automatically.
-- [chectl](https://github.com/che-incubator/chectl) - release artifact is a set of binaries, published to [Releases page]https://github.com/che-incubator/chectl/releases 
-- [che-docs](https://github.com/eclipse/che-docs) - only create tag and pull request to update to latest released version of Che
-- [community-operator](https://github.com/operator-framework/community-operators/) - [create pull requests](https://github.com/operator-framework/community-operators/pulls?q=%22Update+eclipse-che+operator%22+is%3Aopen) to update to latest released version of Che in OperatorHub
+
+| Phase       | Project | Workflow Status | Artifact |
+| :---        | :---    | :---            | :---       | 
+| **Phase 5** | [community-operator](https://github.com/operator-framework/community-operators/) | [![Release](https://github.com/eclipse-che/che-operator/actions/workflows/release-community-operator-PRs.yml/badge.svg)](https://github.com/eclipse-che/che-operator/actions/workflows/release-community-operator-PRs.yml) | [create pull requests](https://github.com/operator-framework/community-operators/pulls?q=%22Update+eclipse-che+operator%22+is%3Aopen) to update to latest released version of Che in OperatorHub
+| | [chectl](https://github.com/che-incubator/chectl) | [![Release](https://github.com/eclipse-che/che-operator/actions/workflows/release-chectl.yml/badge.svg)](https://github.com/eclipse-che/che-operator/actions/workflows/release-chectl.yml) | [CLI tarballs](https://github.com/che-incubator/chectl/releases)
+| | [che-docs](https://github.com/eclipse/che-docs) | [![Release](https://github.com/eclipse-che/che-docs/actions/workflows/publication-builder.yaml/badge.svg)](https://github.com/eclipse-che/che-docs/actions/workflows/publication-builder.yaml) | tag and pull request to update to [latest Che](https://github.com/eclipse-che/che-docs/tree/publication)
 
 ## Release phases
 
@@ -91,3 +84,4 @@ The [Release - Orchestrate Overall Release Phases]((https://github.com/eclipse-c
 # Che release known issues
 
 None at this time.
+
