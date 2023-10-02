@@ -76,7 +76,9 @@ The [Release - Orchestrate Overall Release Phases]((https://github.com/eclipse-c
 
     3.3 Docs PR has to be merged by Docs team.
 
-4. When the release is complete, an e-mail should be sent to the `che-dev` mailing list. Additionally, a [Mattermost notification](https://github.com/eclipse-che/che-release/actions/workflows/release-send-mattermost-announcement.yml) can be sent to https://mattermost.eclipse.org/eclipse/channels/eclipse-che-releases
+4. When the release is complete, an e-mail should be sent to the `che-dev` mailing list. 
+
+5. TODO: a Slack notification should be sent to the ECD Slack. See https://github.com/eclipse/che/issues/22551
 
 --------------
 
