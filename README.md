@@ -52,6 +52,41 @@ Che Operator requires PR checks and manual approvals. When everything has been v
 | | [chectl](https://github.com/che-incubator/chectl) | [![Release](https://github.com/eclipse-che/che-operator/actions/workflows/release-chectl.yml/badge.svg)](https://github.com/eclipse-che/che-operator/actions/workflows/release-chectl.yml) | [CLI tarballs](https://github.com/che-incubator/chectl/releases)
 | | [che-docs](https://github.com/eclipse/che-docs) | [![Release](https://github.com/eclipse-che/che-docs/actions/workflows/publication-builder.yaml/badge.svg)](https://github.com/eclipse-che/che-docs/actions/workflows/publication-builder.yaml) | tag and pull request to update to [latest Che](https://github.com/eclipse-che/che-docs/tree/publication)
 
+### Notifications
+
+[Notifications](https://github.com/integrations/slack#features) can be seen in the ECD Slack, across the following channels.
+
+### [#forum-che-release](https://app.slack.com/client/TMU5A34SW/C0612PAJ4SX)
+
+```
+/github subscribe che-incubator/chectl releases workflows:{event:"workflow_dispatch","push" branch:"main"}  
+/github unsubscribe che-incubator/chectl issues pulls commits deployments branches
+
+/github subscribe eclipse-che/che-operator workflows:{event:"workflow_dispatch","push" branch:"main"}
+/github unsubscribe eclipse-che/che-operator issues pulls commits releases deployments branches
+
+/github subscribe eclipse-che/che-release workflows:{event:"workflow_dispatch","push" branch:"main"}
+/github unsubscribe eclipse-che/che-release issues pulls commits releases deployments branches
+
+/github subscribe eclipse/che issues releases +label:'status/need-triage'
+/github unsubscribe eclipse/che pulls commits deployments branches
+
+/github subscribe list features
+```
+
+See [#forum-che-release](https://app.slack.com/client/TMU5A34SW/C0612PAJ4SX)
+
+### [#forum-che](https://app.slack.com/client/TMU5A34SW/C05SD64M85R)
+
+```
+/github subscribe eclipse/che issues releases +label:'status/need-triage'
+/github unsubscribe eclipse/che pulls commits deployments branches
+
+/github subscribe list features
+```
+
+See [#forum-che](https://app.slack.com/client/TMU5A34SW/C05SD64M85R)
+
 ## Release phases
 
 The [Release - Orchestrate Overall Release Phases]((https://github.com/eclipse-che/che-release/actions?query=workflow%3A%22Release+-+Orchestrate+Overall+Release+Phases%22)) action runs [make-release.sh](https://github.com/eclipse-che/che-release/blob/main/make-release.sh) to release the various Che containers and packages in the correct order. This ensures that dependencies between containers or packages can be met. See [make-release.sh](https://github.com/eclipse-che/che-release/blob/main/make-release.sh) for these dependencies. The list of phases is above. 
