@@ -1,5 +1,5 @@
 # This Workflow announces a release in Eclipse Mattermost to https://mattermost.eclipse.org/eclipse/channels/eclipse-che-releases
-name: Release - Send mattermost notification
+name: Release - Send notification
 on:
   workflow_dispatch:
     inputs:
@@ -28,15 +28,18 @@ jobs:
       run: |
         milestone=${{ github.event.inputs.version }}
         milestone=${milestone%.*}; echo "milestone: ${milestone}"
+        echo "{\"text\":\":che-logo: Che ${{ github.event.inputs.version }} has been released.\n\n Please resolve or move unresolved issues assigned to this milestone: https://github.com/eclipse/che/milestones/${milestone}\"}" 
         echo "{\"text\":\":che-logo: Che ${{ github.event.inputs.version }} has been released.\n\n Please resolve or move unresolved issues assigned to this milestone: https://github.com/eclipse/che/milestones/${milestone}\"}" > mattermost.json
     - name: Create failure message
       if: ${{ failure() }}
       run: |
+        echo "{\"text\":\":che-logo: Che ${{ github.event.inputs.version }} release final checks have failed:\n\n failed: https://github.com/eclipse-che/che-release/actions/workflows/release-send-mattermost-announcement.yml.\"}" 
         echo "{\"text\":\":che-logo: Che ${{ github.event.inputs.version }} release final checks have failed:\n\n failed: https://github.com/eclipse-che/che-release/actions/workflows/release-send-mattermost-announcement.yml.\"}" > mattermost.json
-    - name: Send message
-      if: ${{ success() }} || ${{ failure() }}
-      uses: mattermost/action-mattermost-notify@1.1.0
-      env:
-        MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
-        MATTERMOST_CHANNEL: eclipse-che-releases
-        MATTERMOST_USERNAME: che-bot
+    # TODO send to slack as MM no longer exists
+    # - name: Send message
+    #   if: ${{ success() }} || ${{ failure() }}
+    #   uses: mattermost/action-mattermost-notify@1.1.0
+    #   env:
+    #     MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
+    #     MATTERMOST_CHANNEL: eclipse-che-releases
+    #     MATTERMOST_USERNAME: che-bot
