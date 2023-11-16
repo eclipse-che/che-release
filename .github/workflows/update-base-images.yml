@@ -151,14 +151,3 @@ jobs:
                 echo GOT_PR=true >> $GITHUB_OUTPUT
               fi
             fi
-      - name: Create MM message
-        if: steps.SETUP_PR_LINK.outputs.GOT_PR == 'true'
-        run: |
-          echo "{\"text\":\":octocat: Base image update for [${{ matrix.projects.repo }}](${{ env.PR_URL }})\"}" > mattermost.json
-      - name: Send MM message
-        if: steps.SETUP_PR_LINK.outputs.GOT_PR == 'true'
-        uses: mattermost/action-mattermost-notify@1.1.0
-        env:
-          MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
-          MATTERMOST_CHANNEL: eclipse-che-ci
-          MATTERMOST_USERNAME: che-bot
