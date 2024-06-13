@@ -118,7 +118,7 @@ releaseCheServer() {
 }
 
 releaseDevworkspaceGenerator() {
-    invokeAction eclipse-che/che-devfile-registry "Release Che Devworkspace Generator" "67742638" "version=${CHE_VERSION}"
+    invokeAction devfile/devworkspace-generator "Release Che Devworkspace Generator" "102323522" "version=${CHE_VERSION}"
 }
 
 createBranches() {
