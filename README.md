@@ -3,9 +3,7 @@
 ## Permissions
  
 1. Get push permission from @fbenoit to push applications
-    * https://quay.io/organization/eclipse-che-operator-kubernetes/teams/pushers
     * https://quay.io/organization/eclipse-che-operator-openshift/teams/pushers 
-    * https://quay.io/application/eclipse-che-operator-kubernetes
     * https://quay.io/application/eclipse-che-operator-openshift
 
 2. Get commit rights from @fbenoit to push community PRs
@@ -52,6 +50,7 @@ Che Operator requires PR checks and manual approvals. When everything has been v
 | | [chectl](https://github.com/che-incubator/chectl) | [![Release](https://github.com/eclipse-che/che-operator/actions/workflows/release-chectl.yml/badge.svg)](https://github.com/eclipse-che/che-operator/actions/workflows/release-chectl.yml) | [CLI tarballs](https://github.com/che-incubator/chectl/releases)
 | | [che-docs](https://github.com/eclipse/che-docs) | [![Release](https://github.com/eclipse-che/che-docs/actions/workflows/publication-builder.yaml/badge.svg)](https://github.com/eclipse-che/che-docs/actions/workflows/publication-builder.yaml) | tag and 3 pull requests to update to [latest Che](https://github.com/eclipse-che/che-docs/tree/publication)
 | | [che-website-publish](https://github.com/eclipse-cheche-website-publish)  | [![Publish](https://github.com/eclipse-che/che-website-publish/actions/workflows/publish.yaml/badge.svg)](https://github.com/eclipse-che/che-website-publish/actions/workflows/publish.yaml) | update live [Che Docs website](https://eclipse.dev/che/docs/stable/) with published documentation (when che-docs PRs are merged)
+
 ### Notifications
 
 [Notifications](https://github.com/integrations/slack#features) can be seen in the ECD Slack, across the following channels.
@@ -117,6 +116,15 @@ The [Release - Orchestrate Overall Release Phases]((https://github.com/eclipse-c
 
 --------------
 
+
+### Che projects that are not part of the release process:
+
+Here is the information about projects related to Che, but are not a part of Che release process/versioning 
+
+https://github.com/devfile/devworkspace-operator - used in Che operator.
+https://github.com/che-incubator/kubernetes-image-puller-operator - used in Che operator.
+https://github.com/eclipse-che/blog - Eclipse Che blog.
+https://github.com/eclipse-che/che-website - Eclipse Che website sources. [che-website-publish](https://github.com/eclipse-che/che-website-publish) will publish this website, along with Che Docs
 
 # Che release known issues
 
