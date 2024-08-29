@@ -28,7 +28,6 @@ updateImagesInProject()
 }
 
 updateImagesInProject "eclipse-che/che-machine-exec" "main" "" &
-updateImagesInProject "eclipse-che/che-devfile-registry" "main" "" &
 updateImagesInProject "eclipse-che/che-plugin-registry" "main" "" &
 updateImagesInProject "eclipse-che/che-dashboard" "main" "" &
 updateImagesInProject "che-incubator/chectl" "main" "" &

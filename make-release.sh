@@ -16,12 +16,11 @@ usage ()
 # Comma-separated phases to perform.
 #1: Code, Configbump, MachineExec, Server, devworkspace-generator, createBranches (kubernetes-image-puller);
 #2: E2E, PluginRegistry, Dashboard;
-#3: DevfileRegistry;
-#4: Operator;
-# Default: 1,2,3,4
+#3: Operator;
+# Default: 1,2,3
 # Omit phases that have successfully run.
 "
-  echo "Example: $0 --version 7.75.0 --phases 1,2,3,4"; echo
+  echo "Example: $0 --version 7.75.0 --phases 1,2,3"; echo
   exit 1
 }
 
@@ -139,12 +138,6 @@ releaseDashboard() {
     invokeAction eclipse-che/che-dashboard "Release Che Dashboard" "3152474" "version=${CHE_VERSION}"
 }
 
-#################### PHASE 3 ####################
-
-releaseDevfileRegistry() {
-    invokeAction eclipse-che/che-devfile-registry "Release Che Devfile Registry" "4191260" "version=${CHE_VERSION}"
-}
-
 #################### PHASE 4 ####################
 
 releaseCheOperator() {
@@ -224,21 +217,11 @@ verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-plugin-registry
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-dashboard:${CHE_VERSION} 60
 
-#################### PHASE 3 ####################
-
-# Release devfile registry (depends on plugin registry)
-if [[ ${PHASES} == *"3"* ]]; then
-  releaseDevfileRegistry
-fi
-wait 
-# shellcheck disable=SC2086
-verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-devfile-registry:${CHE_VERSION} 60
-
 #################### PHASE 4 ####################
 
-# Create operator PRs (depends on devfile registry)
+# Create operator PRs (depends on all phases above)
 set +x
-if [[ ${PHASES} == *"4"* ]]; then
+if [[ ${PHASES} == *"3"* ]]; then
     releaseCheOperator
 fi
 wait

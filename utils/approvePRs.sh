@@ -21,7 +21,6 @@ che-incubator/kubernetes-image-puller-operator \
 devfile/devworkspace-operator \
 devfile/developer-images \
 eclipse-che/che-dashboard \
-eclipse-che/che-devfile-registry \
 eclipse-che/che-machine-exec \
 eclipse-che/che-operator \
 eclipse-che/che-plugin-registry \

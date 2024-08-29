@@ -40,9 +40,7 @@ The projects covered by this workflow release container images, NPM artifacts, o
 | | [che-plugin-registry](https://github.com/eclipse-che/che-plugin-registry) | [![Release](https://github.com/eclipse-che/che-plugin-registry/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse-che/che-plugin-registry/actions/workflows/release.yml) | [che-plugin-registry](https://quay.io/eclipse/che-plugin-registry) |
 | | [che-dashboard](https://github.com/eclipse-che/che-dashboard) | [![release latest stable](https://github.com/eclipse-che/che-dashboard/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse-che/che-dashboard/actions/workflows/release.yml) | [che-dashboard](https://quay.io/eclipse/che-dashboard) |
 | | | 
-| **Phase 3** | [che-devfile-registry](https://github.com/eclipse-che/che-devfile-registry) | [![Release](https://github.com/eclipse-che/che-devfile-registry/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse-che/che-devfile-registry/actions/workflows/release.yml) | [che-devfile-registry](https://quay.io/eclipse/che-devfile-registry) |
-| |
-| **Phase 4** | [che-operator](https://github.com/eclipse-che/che-operator) | [![Release](https://github.com/eclipse-che/che-operator/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse-che/che-operator/actions/workflows/release.yml) | [che-operator](https://quay.io/eclipse/che-operator) |
+| **Phase 3** | [che-operator](https://github.com/eclipse-che/che-operator) | [![Release](https://github.com/eclipse-che/che-operator/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse-che/che-operator/actions/workflows/release.yml) | [che-operator](https://quay.io/eclipse/che-operator) |
 
 Che Operator requires PR checks and manual approvals. When everything has been verified, and the PRs generated in the previous step are merged, the following workflows will be triggered.
 

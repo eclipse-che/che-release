@@ -18,15 +18,14 @@ on:
       phases:
         description: '
 # Comma-separated phases to perform.
-#1: Code, MachineExec, Dashboard, Server, branches;
-#2: E2E, PluginRegistry;
-#3: DevfileRegistry;
-#4: CheOperator;
-# Default: 1,2,3,4
+#1: Code, MachineExec, Server, branches;
+#2: E2E, PluginRegistry, Dashboard;
+#3: CheOperator;
+# Default: 1,2,3
 # Omit phases that have successfully run.
 '
         required: true
-        default: '1,2,3,4'
+        default: '1,2,3'
 jobs:
   pre_job:
     runs-on: ubuntu-22.04

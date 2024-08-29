@@ -13,7 +13,6 @@ REPO_LIST=(
     che-incubator/configbump
     che-incubator/kubernetes-image-puller
     eclipse-che/che-dashboard
-    eclipse-che/che-devfile-registry
     eclipse-che/che-machine-exec
     eclipse-che/che-operator
     eclipse-che/che-plugin-registry
