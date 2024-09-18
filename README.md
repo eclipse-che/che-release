@@ -3,9 +3,7 @@
 ## Permissions
  
 1. Get push permission from @fbenoit to push applications
-    * https://quay.io/organization/eclipse-che-operator-kubernetes/teams/pushers
     * https://quay.io/organization/eclipse-che-operator-openshift/teams/pushers 
-    * https://quay.io/application/eclipse-che-operator-kubernetes
     * https://quay.io/application/eclipse-che-operator-openshift
 
 2. Get commit rights from @fbenoit to push community PRs
@@ -36,7 +34,7 @@ The projects covered by this workflow release container images, NPM artifacts, o
 | | [devworkspace-generator](https://github.com/devfile/devworkspace-generator ) | [![Release](https://github.com/devfile/devworkspace-generator/actions/workflows/devworkspace-generator-release.yml/badge.svg)](https://github.com/devfile/devworkspace-generator/actions/workflows/devworkspace-generator-release.yml) | NPM [@eclipse-che/che-devworkspace-generator](https://www.npmjs.com/package/@eclipse-che/che-devworkspace-generator)
 | | [kubernetes-image-puller](https://github.com/che-incubator/kubernetes-image-puller) | [![Branch](https://github.com/che-incubator/kubernetes-image-puller/actions/workflows/make-branch.yaml/badge.svg)](https://github.com/che-incubator/kubernetes-image-puller/actions/workflows/make-branch.yaml) | [kubernetes-image-puller/branches](https://github.com/che-incubator/kubernetes-image-puller/branches/active)
 | | | 
-| **Phase 2** | [che-e2e](https://github.com/eclipse/che) | [![Release](https://github.com/eclipse/che/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse/che/actions/workflows/release.yml) | [che-e2e](https://quay.io/eclipse/che-e2e) |
+| **Phase 2** | [che-e2e](https://github.com/eclipse-che/che) | [![Release](https://github.com/eclipse-che/che/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse-che/che/actions/workflows/release.yml) | [che-e2e](https://quay.io/eclipse/che-e2e) |
 | | [che-plugin-registry](https://github.com/eclipse-che/che-plugin-registry) | [![Release](https://github.com/eclipse-che/che-plugin-registry/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse-che/che-plugin-registry/actions/workflows/release.yml) | [che-plugin-registry](https://quay.io/eclipse/che-plugin-registry) |
 | | [che-dashboard](https://github.com/eclipse-che/che-dashboard) | [![release latest stable](https://github.com/eclipse-che/che-dashboard/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse-che/che-dashboard/actions/workflows/release.yml) | [che-dashboard](https://quay.io/eclipse/che-dashboard) |
 | | | 
@@ -48,7 +46,8 @@ Che Operator requires PR checks and manual approvals. When everything has been v
 | :---        | :---    | :---            | :---           |
 | **Phase 5** | [community-operator](https://github.com/redhat-openshift-ecosystem/community-operators-prod) | [![Release](https://github.com/eclipse-che/che-operator/actions/workflows/release-community-operator-PRs.yml/badge.svg)](https://github.com/eclipse-che/che-operator/actions/workflows/release-community-operator-PRs.yml) | [create pull requests](https://github.com/operator-framework/community-operators/pulls?q=%22Update+eclipse-che+operator%22+is%3Aopen) to update to latest released version of Che in OperatorHub
 | | [chectl](https://github.com/che-incubator/chectl) | [![Release](https://github.com/eclipse-che/che-operator/actions/workflows/release-chectl.yml/badge.svg)](https://github.com/eclipse-che/che-operator/actions/workflows/release-chectl.yml) | [CLI tarballs](https://github.com/che-incubator/chectl/releases)
-| | [che-docs](https://github.com/eclipse/che-docs) | [![Release](https://github.com/eclipse-che/che-docs/actions/workflows/publication-builder.yaml/badge.svg)](https://github.com/eclipse-che/che-docs/actions/workflows/publication-builder.yaml) | tag and pull request to update to [latest Che](https://github.com/eclipse-che/che-docs/tree/publication)
+| | [che-docs](https://github.com/eclipse/che-docs) | [![Release](https://github.com/eclipse-che/che-docs/actions/workflows/publication-builder.yaml/badge.svg)](https://github.com/eclipse-che/che-docs/actions/workflows/publication-builder.yaml) | tag and 3 pull requests to update to [latest Che](https://github.com/eclipse-che/che-docs/tree/publication)
+| | [che-website-publish](https://github.com/eclipse-cheche-website-publish)  | [![Publish](https://github.com/eclipse-che/che-website-publish/actions/workflows/publish.yaml/badge.svg)](https://github.com/eclipse-che/che-website-publish/actions/workflows/publish.yaml) | update live [Che Docs website](https://eclipse.dev/che/docs/stable/) with published documentation (when che-docs PRs are merged)
 
 ### Notifications
 
@@ -66,8 +65,8 @@ Che Operator requires PR checks and manual approvals. When everything has been v
 /github subscribe eclipse-che/che-release workflows:{event:"workflow_dispatch","push" branch:"main"}
 /github unsubscribe eclipse-che/che-release issues pulls commits releases deployments branches
 
-/github subscribe eclipse/che issues releases +label:'status/need-triage'
-/github unsubscribe eclipse/che pulls commits deployments branches
+/github subscribe eclipse-che/che issues releases +label:'status/need-triage'
+/github unsubscribe eclipse-che/che pulls commits deployments branches
 
 /github subscribe list features
 ```
@@ -77,8 +76,8 @@ See [#forum-che-release](https://app.slack.com/client/TMU5A34SW/C0612PAJ4SX)
 ### [#forum-che](https://app.slack.com/client/TMU5A34SW/C05SD64M85R)
 
 ```
-/github subscribe eclipse/che issues releases +label:'status/need-triage'
-/github unsubscribe eclipse/che pulls commits deployments branches
+/github subscribe eclipse-che/che issues releases +label:'status/need-triage'
+/github unsubscribe eclipse-che/che pulls commits deployments branches
 
 /github subscribe list features
 ```
@@ -91,13 +90,13 @@ The [Release - Orchestrate Overall Release Phases]((https://github.com/eclipse-c
 
 
 ## Release procedure
-1. Original procedure was to [create new release issue to report status and collect any blocking issues](https://github.com/eclipse/che/issues/new?assignees=&labels=kind%2Frelease&template=release.md&title=Release+Che+7.FIXME), however the issue was usually empty since problems are resolved via Mattermost and Slack so communication is done there. 
+1. Original procedure was to [create new release issue to report status and collect any blocking issues](https://github.com/eclipse-che/che/issues/new?assignees=&labels=kind%2Frelease&template=release.md&title=Release+Che+7.FIXME), however the issue was usually empty since problems are resolved via Mattermost and Slack so communication is done there. 
 
 2. To start a release, use the [Release - Orchestrate Overall Release Phases](https://github.com/eclipse-che/che-release/actions/workflows/release-orchestrate-overall.yml) workflow to trigger workflows in other Che repos. Workflows triggered align to the repos noted in the previous section. In the input, provide the version of Che, and phases to run. 
 
     2.1 If one of the workflows has crashed, inspect it. Apply fixes if needed, and restart it. You can restart individual workflow, or whole phase in orchestration job, whichever is simpler.
 
-    2.2 Keep in mind, that sometimes you'll need to [regenerate tags](https://github.com/eclipse/che/issues/18879), or skip certain substeps in that job. Also ensure that correct code is in place, whether it is main or bugfix branch.
+    2.2 Keep in mind, that sometimes you'll need to [regenerate tags](https://github.com/eclipse-che/che/issues/18879), or skip certain substeps in that job. Also ensure that correct code is in place, whether it is main or bugfix branch.
 
     2.3 Sometimes, the hotfix changes to the workflow can take too long to get approved and merged. In certain situations, we can use the modified workflow file, which is pushed in its own branch, and then trigger the workflow, while specifying the branch with our modified workflow. 
 
@@ -111,12 +110,21 @@ The [Release - Orchestrate Overall Release Phases]((https://github.com/eclipse-c
 
 4. When the release is complete, an e-mail should be sent to the `che-dev` mailing list. 
 
-5. TODO: a Slack notification should be sent to the ECD Slack. See https://github.com/eclipse/che/issues/22551
+5. TODO: a Slack notification should be sent to the ECD Slack. See https://github.com/eclipse-che/che/issues/22551
 
 --------------
 
 
+### Che projects that are not part of the release process:
+
+Here is the information about projects related to Che, but are not a part of Che release process/versioning 
+
+https://github.com/devfile/devworkspace-operator - used in Che operator.
+https://github.com/che-incubator/kubernetes-image-puller-operator - used in Che operator.
+https://github.com/eclipse-che/blog - Eclipse Che blog.
+https://github.com/eclipse-che/che-website - Eclipse Che website sources. [che-website-publish](https://github.com/eclipse-che/che-website-publish) will publish this website, along with Che Docs
+
 # Che release known issues
 
-* Enable slack notifications #[22551](https://github.com/eclipse/che/issues/22551)
-* Autorelease the Che Release Notes after chectl release #[22550](https://github.com/eclipse/che/issues/22550)
+* Enable slack notifications #[22551](https://github.com/eclipse-che/che/issues/22551)
+* Autorelease the Che Release Notes after chectl release #[22550](https://github.com/eclipse-che/che/issues/22550)
