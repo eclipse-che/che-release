@@ -18,7 +18,7 @@ on:
       phases:
         description: '
 # Comma-separated phases to perform.
-#1: Code, MachineExec, Server, branches;
+#1: Code, JetBrainsIdeDevServer, MachineExec, Server, branches;
 #2: E2E, PluginRegistry, Dashboard;
 #3: CheOperator;
 # Default: 1,2,3
