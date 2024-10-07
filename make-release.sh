@@ -14,7 +14,7 @@ usage ()
   echo "Usage: $0  --version [CHE VERSION TO RELEASE] --parent-version [CHE PARENT VERSION] --phases [LIST OF PHASES]
 
 # Comma-separated phases to perform.
-#1: Code, Configbump, MachineExec, Server, devworkspace-generator, createBranches (kubernetes-image-puller);
+#1: Code, JetBrainsIdeDevServer, Configbump, MachineExec, Server, devworkspace-generator, createBranches (kubernetes-image-puller);
 #2: E2E, PluginRegistry, Dashboard;
 #3: Operator;
 # Default: 1,2,3
@@ -104,6 +104,10 @@ releaseCheCode() {
     invokeAction che-incubator/che-code "Release Che Code" "34764281" "version=${CHE_VERSION}"
 }
 
+releaseJetBrainsIDE() {
+    invokeAction che-incubator/jetbrains-ide-dev-server "Release JetBrains IDE Dev Server" "120670986" "version=${CHE_VERSION}"
+}
+
 releaseConfigbump() {
     invokeAction che-incubator/configbump "Release Che Configbump" "69757177" "version=${CHE_VERSION}"
 }
@@ -179,6 +183,7 @@ set -e
 set +x 
 if [[ ${PHASES} == *"1"* ]]; then
     releaseCheCode
+    releaseJetBrainsIDE
     releaseConfigbump
     releaseMachineExec
     releaseCheServer
@@ -188,6 +193,8 @@ fi
 wait
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/che-incubator/che-code:${CHE_VERSION} 60
+# shellcheck disable=SC2086
+verifyContainerExistsWithTimeout ${REGISTRY}/che-incubator/che-idea-dev-server:${CHE_VERSION} 60
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/che-incubator/configbump:${CHE_VERSION} 60
 # shellcheck disable=SC2086
