@@ -2,11 +2,11 @@
 
 ## Permissions
  
-1. Get push permission from @fbenoit to push applications
+1. Get push permission from @mkuznets @SDawley to push applications
     * https://quay.io/organization/eclipse-che-operator-openshift/teams/pushers 
     * https://quay.io/application/eclipse-che-operator-openshift
 
-2. Get commit rights from @fbenoit to push community PRs
+2. Get commit rights from @mkuznets @SDawley to push community PRs
     * https://github.com/che-incubator/community-operators
 
 
@@ -25,7 +25,7 @@ The projects covered by this workflow release container images, NPM artifacts, o
 
 ### Statuses
 
-| Phase       | Project | Workflow Status | Quay Image or NPM Artifact |
+| Phase       | Project | Workflow Status | Quay Image / Artifact |
 | :---        | :---    | :---            | :---                       |
 | **Phase 1** | [che-code](https://github.com/che-incubator/che-code) | [![Release](https://github.com/che-incubator/che-code/actions/workflows/release.yml/badge.svg)](https://github.com/che-incubator/che-code/actions/workflows/release.yml) | [che-code](https://quay.io/che-incubator/che-code) |
 | | [jetbrains-ide-dev-server](https://github.com/che-incubator/jetbrains-ide-dev-server) | [![Release](https://github.com/che-incubator/jetbrains-ide-dev-server/actions/workflows/release.yml/badge.svg)](https://github.com/che-incubator/jetbrains-ide-dev-server/actions/workflows/release.yml) | [jetbrains-ide-dev-server](https://quay.io/che-incubator/che-idea-dev-server) |
@@ -40,15 +40,14 @@ The projects covered by this workflow release container images, NPM artifacts, o
 | | [che-dashboard](https://github.com/eclipse-che/che-dashboard) | [![release latest stable](https://github.com/eclipse-che/che-dashboard/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse-che/che-dashboard/actions/workflows/release.yml) | [che-dashboard](https://quay.io/eclipse/che-dashboard) |
 | | | 
 | **Phase 3** | [che-operator](https://github.com/eclipse-che/che-operator) | [![Release](https://github.com/eclipse-che/che-operator/actions/workflows/release.yml/badge.svg)](https://github.com/eclipse-che/che-operator/actions/workflows/release.yml) | [che-operator](https://quay.io/eclipse/che-operator) |
-
-Che Operator requires PR checks and manual approvals. When everything has been verified, and the PRs generated in the previous step are merged, the following workflows will be triggered.
-
-| Phase       | Project | Workflow Status | Other Artifact |
-| :---        | :---    | :---            | :---           |
-| **Phase 5** | [community-operator](https://github.com/redhat-openshift-ecosystem/community-operators-prod) | [![Release](https://github.com/eclipse-che/che-operator/actions/workflows/release-community-operator-PRs.yml/badge.svg)](https://github.com/eclipse-che/che-operator/actions/workflows/release-community-operator-PRs.yml) | [create pull requests](https://github.com/operator-framework/community-operators/pulls?q=%22Update+eclipse-che+operator%22+is%3Aopen) to update to latest released version of Che in OperatorHub
+| | | 
+| **Phase 4** | [community-operator](https://github.com/redhat-openshift-ecosystem/community-operators-prod) | [![Release](https://github.com/eclipse-che/che-operator/actions/workflows/release-community-operator-PRs.yml/badge.svg)](https://github.com/eclipse-che/che-operator/actions/workflows/release-community-operator-PRs.yml) | [create pull requests](https://github.com/operator-framework/community-operators/pulls?q=%22Update+eclipse-che+operator%22+is%3Aopen) to update to latest released version of Che in OperatorHub
 | | [chectl](https://github.com/che-incubator/chectl) | [![Release](https://github.com/eclipse-che/che-operator/actions/workflows/release-chectl.yml/badge.svg)](https://github.com/eclipse-che/che-operator/actions/workflows/release-chectl.yml) | [CLI tarballs](https://github.com/che-incubator/chectl/releases)
 | | [che-docs](https://github.com/eclipse/che-docs) | [![Release](https://github.com/eclipse-che/che-docs/actions/workflows/publication-builder.yaml/badge.svg)](https://github.com/eclipse-che/che-docs/actions/workflows/publication-builder.yaml) | tag and 3 pull requests to update to [latest Che](https://github.com/eclipse-che/che-docs/tree/publication)
-| | [che-website-publish](https://github.com/eclipse-cheche-website-publish)  | [![Publish](https://github.com/eclipse-che/che-website-publish/actions/workflows/publish.yaml/badge.svg)](https://github.com/eclipse-che/che-website-publish/actions/workflows/publish.yaml) | update live [Che Docs website](https://eclipse.dev/che/docs/stable/) with published documentation (when che-docs PRs are merged)
+| | |
+| **Phase 5** | [che-website-publish](https://github.com/eclipse-cheche-website-publish)  | [![Publish](https://github.com/eclipse-che/che-website-publish/actions/workflows/publish.yaml/badge.svg)](https://github.com/eclipse-che/che-website-publish/actions/workflows/publish.yaml) | update live [Che Docs website](https://eclipse.dev/che/docs/stable/) with published documentation (when che-docs PRs are merged)
+| | |
+| **Phase 6** | [release-check-unmerged-PRs](https://github.com/eclipse-cheche-website-publish)  | [![Publish](https://github.com/eclipse-che/che-website-publish/actions/workflows/publish.yaml/badge.svg)](https://github.com/eclipse-che/che-website-publish/actions/workflows/publish.yaml) | update live [Che Docs website](https://eclipse.dev/che/docs/stable/) with published documentation (when che-docs PRs are merged)
 
 ### Notifications
 
@@ -89,11 +88,10 @@ See [#forum-che](https://app.slack.com/client/TMU5A34SW/C05SD64M85R)
 
 The [Release - Orchestrate Overall Release Phases]((https://github.com/eclipse-che/che-release/actions?query=workflow%3A%22Release+-+Orchestrate+Overall+Release+Phases%22)) action runs [make-release.sh](https://github.com/eclipse-che/che-release/blob/main/make-release.sh) to release the various Che containers and packages in the correct order. This ensures that dependencies between containers or packages can be met. See [make-release.sh](https://github.com/eclipse-che/che-release/blob/main/make-release.sh) for these dependencies. The list of phases is above. 
 
-
 ## Release procedure
-1. Original procedure was to [create new release issue to report status and collect any blocking issues](https://github.com/eclipse-che/che/issues/new?assignees=&labels=kind%2Frelease&template=release.md&title=Release+Che+7.FIXME), however the issue was usually empty since problems are resolved via Mattermost and Slack so communication is done there. 
+1. [Create a new release issue and include it into the sprint planning](https://github.com/eclipse-che/che/issues/new?assignees=&labels=kind%2Frelease&template=release.md&title=Release+Eclipse+Che+7.NEWVERSION),
 
-2. To start a release, use the [Release - Orchestrate Overall Release Phases](https://github.com/eclipse-che/che-release/actions/workflows/release-orchestrate-overall.yml) workflow to trigger workflows in other Che repos. Workflows triggered align to the repos noted in the previous section. In the input, provide the version of Che, and phases to run. 
+2. Once all pending PRs/blocker issues are resolved, use the [Release - Phases 1-3](https://github.com/eclipse-che/che-release/actions/workflows/release-orchestrate-overall.yml) workflow to trigger Che release workflows. Workflows triggered align to the repos, that are corresponding with 1,2 and 3 phases. In the input, provide the version of Che, and phases to run. 
 
     2.1 If one of the workflows has crashed, inspect it. Apply fixes if needed, and restart it. You can restart individual workflow, or whole phase in orchestration job, whichever is simpler.
 
@@ -101,7 +99,7 @@ The [Release - Orchestrate Overall Release Phases]((https://github.com/eclipse-c
 
     2.3 Sometimes, the hotfix changes to the workflow can take too long to get approved and merged. In certain situations, we can use the modified workflow file, which is pushed in its own branch, and then trigger the workflow, while specifying the branch with our modified workflow. 
 
-3. When Che Operator PRs have been generated, you must wait for the approval of PR checks, that are in that repository. If there are any questions, you can forward them to the check maintaners (Deploy team). When PRs are merged, the last batch of projects will be triggered to release
+3. When Che Operator PRs have been generated, you must wait for the approval of PR checks, that are in that repository. If there are any questions, you can forward them to the [repository maintaners](https://github.com/eclipse-che/che-operator/blob/main/.github/CODEOWNERS#L2). When PRs are merged, the last batch of projects will be triggered to release
 
     3.1 Chectl PR has to be closed manually, after they're generated, and all its associated PR checks are passed.
 
