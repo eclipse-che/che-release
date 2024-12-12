@@ -1,5 +1,5 @@
 # This Workflow performs a full release of Che
-name: Release - Orchestrate Overall Release Phases
+name: Release - Phases 1-3
 on:
   workflow_dispatch:
     inputs:
@@ -17,10 +17,7 @@ on:
         default: '7.15.0'
       phases:
         description: '
-# Comma-separated phases to perform.
-#1: Code, JetBrainsIdeDevServer, MachineExec, Server, branches;
-#2: E2E, PluginRegistry, Dashboard;
-#3: CheOperator;
+# Comma-separated phases to perform (see README.md).
 # Default: 1,2,3
 # Omit phases that have successfully run.
 '
@@ -115,14 +112,3 @@ jobs:
           export CHE_INCUBATOR_BOT_GITHUB_TOKEN=${{ secrets.CHE_INCUBATOR_BOT_GITHUB_TOKEN }}
           set -e
           ./make-release.sh -v ${CHE_VERSION} -p ${PHASES} --parent-version ${PARENT_VERSION}
-      #- name: Create failure MM message
-        #if: ${{ failure() }}
-        #run: |
-          #echo "{\"text\":\":no_entry_sign: Che Release Orchestrator ${{ github.event.inputs.version }} has failed: https://github.com/eclipse-che/che-release/actions/workflows/release-orchestrate-overall.yml\"}" > mattermost.json
-      #- name: Send MM message
-        #if: ${{ failure() }}
-        #uses: mattermost/action-mattermost-notify@1.1.0
-        #env:
-          #MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
-          #MATTERMOST_CHANNEL: eclipse-che-releases
-          #MATTERMOST_USERNAME: che-bot

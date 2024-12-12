@@ -85,15 +85,6 @@ evaluateCheVariables() {
         BASEBRANCH="${BRANCH}"
     fi
 
-    if [[ ${RELEASE_CHE_PARENT} != "true" ]]; then
-        RELEASE_CHE_PARENT="false"
-    fi
-
-    if [[ -z ${VERSION_CHE_PARENT} ]]; then
-        # get latest higher 7.yy.z tag of Che Parent as version
-        # shellcheck disable=SC2062
-        VERSION_CHE_PARENT=$(git -c 'versionsort.suffix=-' ls-remote --tags  https://github.com/eclipse/che-parent.git | cut --delimiter='/' --fields=3 | grep 7.* | sort --version-sort | tail --lines=1)
-    fi
     echo "Basebranch: ${BASEBRANCH}" 
     echo "Release Process Phases: '${PHASES}'"
 }
@@ -117,7 +108,7 @@ releaseMachineExec() {
 }
 
 releaseCheServer() {
-    invokeAction eclipse-che/che-server "Release Che Server" "9230035" "version=${CHE_VERSION},releaseParent=${RELEASE_CHE_PARENT},versionParent=${VERSION_CHE_PARENT}"
+    invokeAction eclipse-che/che-server "Release Che Server" "9230035" "version=${CHE_VERSION}"
 }
 
 releaseDevworkspaceGenerator() {
@@ -152,8 +143,6 @@ while [[ "$#" -gt 0 ]]; do
   case $1 in
     '-v'|'--version') CHE_VERSION="$2"; shift 1;;
     '-p'|'--phases') PHASES="$2"; shift 1;;
-    '--release-parent') RELEASE_CHE_PARENT="true"; shift 0;;
-    '--parent-version') VERSION_CHE_PARENT="$2"; shift 1;;
   esac
   shift 1
 done
