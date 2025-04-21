@@ -14,7 +14,10 @@
 # docker.io/centos/postgresql-13-centos7:1
 
 # for Che 7.58
-docker.io/traefik:v2.9.6
+# docker.io/traefik:v2.9.6
+
+# for Che 7.102
+docker.io/traefik:v3.3.5
 
 # TODO: convince upstream owner to publish to quay.io instead; see https://github.com/eclipse/che-plugin-registry/pull/706
 # docker.io/dirigiblelabs/dirigible-openshift:3.4.0
