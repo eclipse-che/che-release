@@ -19,6 +19,9 @@
 # for Che 7.102
 docker.io/traefik:v3.3.5
 
+# for Che 7.107
+docker.io/traefik:v3.4.0
+
 # TODO: convince upstream owner to publish to quay.io instead; see https://github.com/eclipse/che-plugin-registry/pull/706
 # docker.io/dirigiblelabs/dirigible-openshift:3.4.0
 # docker.io/ksmster/che-editor-jupyter:5.7.0
