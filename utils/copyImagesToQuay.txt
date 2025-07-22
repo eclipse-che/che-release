@@ -17,7 +17,7 @@
 # docker.io/traefik:v2.9.6
 
 # for Che 7.102
-docker.io/traefik:v3.3.5
+# docker.io/traefik:v3.3.5
 
 # for Che 7.107
 docker.io/traefik:v3.4.0
