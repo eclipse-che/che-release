@@ -45,7 +45,7 @@ The projects covered by this workflow release container images, NPM artifacts, o
 | | [chectl](https://github.com/che-incubator/chectl) | [![Release](https://github.com/eclipse-che/che-operator/actions/workflows/release-chectl.yml/badge.svg)](https://github.com/eclipse-che/che-operator/actions/workflows/release-chectl.yml) | [CLI tarballs](https://github.com/che-incubator/chectl/releases)
 | | [che-docs](https://github.com/eclipse/che-docs) | [![Release](https://github.com/eclipse-che/che-docs/actions/workflows/publication-builder.yaml/badge.svg)](https://github.com/eclipse-che/che-docs/actions/workflows/publication-builder.yaml) | tag and 3 pull requests to update to [latest Che](https://github.com/eclipse-che/che-docs/tree/publication)
 | | |
-| **Phase 5** | [che-website-publish](https://github.com/eclipse-cheche-website-publish)  | [![Publish](https://github.com/eclipse-che/che-website-publish/actions/workflows/publish.yaml/badge.svg)](https://github.com/eclipse-che/che-website-publish/actions/workflows/publish.yaml) | update live [Che Docs website](https://eclipse.dev/che/docs/stable/) with published documentation (when che-docs PRs are merged)
+| **Phase 5** | [che-website-publish](https://github.com/eclipse-che/che-website-publish)  | [![Publish](https://github.com/eclipse-che/che-website-publish/actions/workflows/publish.yaml/badge.svg)](https://github.com/eclipse-che/che-website-publish/actions/workflows/publish.yaml) | update live [Che Docs website](https://eclipse.dev/che/docs/stable/) with published documentation (when che-docs PRs are merged)
 | | |
 | **Phase 6** | [release-check-unmerged-PRs](https://github.com/eclipse-cheche-website-publish)  | [![Publish](https://github.com/eclipse-che/che-website-publish/actions/workflows/publish.yaml/badge.svg)](https://github.com/eclipse-che/che-website-publish/actions/workflows/publish.yaml) | update live [Che Docs website](https://eclipse.dev/che/docs/stable/) with published documentation (when che-docs PRs are merged)
 
@@ -99,18 +99,22 @@ The [Release - Orchestrate Overall Release Phases]((https://github.com/eclipse-c
 
     2.3 Sometimes, the hotfix changes to the workflow can take too long to get approved and merged. In certain situations, we can use the modified workflow file, which is pushed in its own branch, and then trigger the workflow, while specifying the branch with our modified workflow. 
 
-3. When Che Operator PRs have been generated, you must wait for the approval of PR checks, that are in that repository. If there are any questions, you can forward them to the [repository maintaners](https://github.com/eclipse-che/che-operator/blob/main/.github/CODEOWNERS#L2). When PRs are merged, the last batch of projects will be triggered to release
-
+3. When Che Operator PRs have been generated, you must wait for the approval of PR checks, that are in that repository. If there are any questions, you can forward them to the [repository maintaners](https://github.com/eclipse-che/che-operator/blob/main/.github/CODEOWNERS#L2). When PRs are merged, the last batch of projects will be triggered to release (Phase 4)
     3.1 Chectl PR has to be closed manually, after they're generated, and all its associated PR checks are passed.
 
     3.2 Community operator PRs are merged by Operator Framework members, as soon as their tests will pass (in some cases they may require some input from us)
 
-    3.3 Docs PR has to be merged by Docs team.
+    3.3 Docs PR has to be merged by Docs team. Also make sure to trigger the publication job to update website and docs.
 
-4. When the release is complete, an e-mail should be sent to the `che-dev` mailing list. 
+4. After docs are merged, make sure that [https://github.com/eclipse-che/che-website-publish/actions](che website publication) job has ran successfully.
 
-5. TODO: a Slack notification should be sent to the ECD Slack. See https://github.com/eclipse-che/che/issues/22551
+5. Final phase 6:
 
+   5.1 Verify that release notes are finalized.
+   
+   5.2 Checking any remaining release-related PRs to be merged (running [Release - Check for unmerged PRs](https://github.com/eclipse-che/che-release/actions/workflows/release-check-unmerged-PRs.yml) will show such PRs)
+   
+   5.3 Complete the release by publishing release notes and announcing it on relevant channels 
 --------------
 
 
