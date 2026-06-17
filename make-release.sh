@@ -14,7 +14,7 @@ usage ()
   echo "Usage: $0  --version [CHE VERSION TO RELEASE] --parent-version [CHE PARENT VERSION] --phases [LIST OF PHASES]
 
 # Comma-separated phases to perform.
-#1: Code, JetBrainsIdeDevServer, Configbump, MachineExec, Server, devworkspace-generator, createBranches (kubernetes-image-puller);
+#1: Code, JetBrainsIdeDevServer, Configbump, Server, devworkspace-generator, createBranches (kubernetes-image-puller);
 #2: E2E, PluginRegistry, Dashboard;
 #3: Operator;
 # Default: 1,2,3
@@ -103,16 +103,12 @@ releaseConfigbump() {
     invokeAction che-incubator/configbump "Release Che Configbump" "69757177" "version=${CHE_VERSION}"
 }
 
-releaseMachineExec() {
-    invokeAction eclipse-che/che-machine-exec "Release Che Machine Exec" "7369994" "version=${CHE_VERSION}"
-}
-
 releaseCheServer() {
     invokeAction eclipse-che/che-server "Release Che Server" "9230035" "version=${CHE_VERSION}"
 }
 
 releaseDevworkspaceGenerator() {
-    invokeAction devfile/devworkspace-generator "Release Che Devworkspace Generator" "102323522" "version=${CHE_VERSION}"
+    invokeAction devfile/devworkspace-generator "Release Che Devworkspace Generator" "102323522" "release-version=${CHE_VERSION}"
 }
 
 createBranches() {
@@ -174,7 +170,6 @@ if [[ ${PHASES} == *"1"* ]]; then
     releaseCheCode
     releaseJetBrainsIDE
     releaseConfigbump
-    releaseMachineExec
     releaseCheServer
     releaseDevworkspaceGenerator
     createBranches
@@ -187,8 +182,6 @@ verifyContainerExistsWithTimeout ${REGISTRY}/che-incubator/che-idea-dev-server:$
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/che-incubator/configbump:${CHE_VERSION} 60
 # shellcheck disable=SC2086
-verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-machine-exec:${CHE_VERSION} 60
-# shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-server:${CHE_VERSION} 60
 # shellcheck disable=SC2086
 verifyBranchExistsWithTimeoutAndExit "https://github.com/che-incubator/kubernetes-image-puller.git" ${BRANCH} 60
@@ -198,8 +191,6 @@ verifyNpmJsPackageExistsWithTimeoutAndExit "@eclipse-che/che-devworkspace-genera
 #################### PHASE 2 ####################
 
 set +x
-# Release e2e (depends on che-server, devworkspace-generator)
-# Release plugin registry (depends on machine-exec)
 if [[ ${PHASES} == *"2"* ]]; then
     releaseCheE2E
     releasePluginRegistry
