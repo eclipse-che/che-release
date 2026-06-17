@@ -11,10 +11,6 @@ on:
         description: 'If true, will also release Che Parent.'
         required: false
         default: 'false'
-      versionParent:
-        description: 'The version of Che Parent'
-        required: false
-        default: '7.15.0'
       phases:
         description: '
 # Comma-separated phases to perform (see README.md).
@@ -99,7 +95,6 @@ jobs:
           CHE_VERSION="${{ github.event.inputs.version }}"
           echo "CHE_VERSION=${CHE_VERSION}"
           PHASES="${{ github.event.inputs.phases }}"
-          PARENT_VERSION="${{ github.event.inputs.versionParent }}"
           PARENT_RELEASE="${{ github.event.inputs.releaseParent }}"
           export CHE_GITHUB_SSH_KEY=${{ secrets.CHE_GITHUB_SSH_KEY }}
 
