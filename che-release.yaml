@@ -1,0 +1,196 @@
+---
+release-config:
+  phases:
+    phase-1:
+      description: "Independent projects (no Che dependencies)"
+      projects:
+        - name: che-code
+          repo: che-incubator/che-code
+          workflow:
+            name: "Release Che Code"
+            id: 34764281
+          artifacts:
+            - type: image
+              name: quay.io/che-incubator/che-code
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+        - name: jetbrains-ide-dev-server
+          repo: che-incubator/jetbrains-ide-dev-server
+          workflow:
+            name: "Release JetBrains IDE Dev Server"
+            id: 120670986
+          artifacts:
+            - type: image
+              name: quay.io/che-incubator/che-idea-dev-server
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+        - name: configbump
+          repo: che-incubator/configbump
+          workflow:
+            name: "Release Che Configbump"
+            id: 69757177
+          artifacts:
+            - type: image
+              name: quay.io/che-incubator/configbump
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+        - name: che-server
+          repo: eclipse-che/che-server
+          workflow:
+            name: "Release Che Server"
+            id: 9230035
+          artifacts:
+            - type: image
+              name: quay.io/eclipse/che-server
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+        - name: devworkspace-generator
+          repo: devfile/devworkspace-generator
+          workflow:
+            name: "Release Che Devworkspace Generator"
+            id: 102323522
+          artifacts:
+            - type: npmjs
+              name: "@eclipse-che/che-devworkspace-generator"
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+        - name: kubernetes-image-puller
+          repo: che-incubator/kubernetes-image-puller
+          workflow:
+            name: "Create branch"
+            id: 5409996
+          artifacts: []
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+    phase-2:
+      description: "Projects depending on Phase 1"
+      projects:
+        - name: che-e2e
+          repo: eclipse/che
+          workflow:
+            name: "Release Che E2E"
+            id: 5536792
+          artifacts:
+            - type: image
+              name: quay.io/eclipse/che-e2e
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+        - name: che-plugin-registry
+          repo: eclipse-che/che-plugin-registry
+          workflow:
+            name: "Release Che Plugin Registry"
+            id: 4191251
+          artifacts:
+            - type: image
+              name: quay.io/eclipse/che-plugin-registry
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+        - name: che-dashboard
+          repo: eclipse-che/che-dashboard
+          workflow:
+            name: "Release Che Dashboard"
+            id: 3152474
+          artifacts:
+            - type: image
+              name: quay.io/eclipse/che-dashboard
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+    phase-3:
+      description: "Operator (depends on all previous phases)"
+      projects:
+        - name: che-operator
+          repo: eclipse-che/che-operator
+          workflow:
+            name: "Release Che Operator"
+            id: 3593082
+          artifacts:
+            - type: image
+              name: quay.io/eclipse/che-operator
+          branches:
+            - "{branch}"
+          pull-requests:
+            - title-pattern: "Release {version}"
+              target-branch: main
+              required-for-completion: true
+
+    phase-4:
+      description: "Downstream releases (manual steps required)"
+      projects:
+        - name: community-operator
+          repo: eclipse-che/che-operator
+          workflow:
+            name: "Release Community Operator PRs"
+          artifacts: []
+          branches: []
+          pull-requests:
+            - title-pattern: "Update eclipse-che operator"
+              target-repo: operator-framework/community-operators
+              required-for-completion: true
+
+        - name: chectl
+          repo: che-incubator/chectl
+          workflow:
+            name: "Release"
+          artifacts:
+            - type: github-release
+              repo: che-incubator/chectl
+          branches:
+            - "{branch}"
+          pull-requests:
+            - title-pattern: "{version}"
+              target-branch: "{branch}"
+              required-for-completion: true
+
+        - name: che-docs
+          repo: eclipse-che/che-docs
+          workflow:
+            name: "Publication Builder"
+          artifacts: []
+          branches:
+            - publication
+          pull-requests:
+            - title-pattern: "Update to {version}"
+              count: 3
+              required-for-completion: true
+
+    phase-5:
+      description: "Website and verification"
+      projects:
+        - name: che-website-publish
+          repo: eclipse-che/che-website-publish
+          workflow:
+            name: "Publish"
+          artifacts:
+            - type: website
+              url: "https://eclipse.dev/che/docs/stable/"
+          branches: []
+          pull-requests: []
+    phase-6:
+      description: "Final verification"
+      projects:
+        - name: release-check-unmerged-PRs
+          repo: eclipse-che/che-release
+          workflow:
+            name: "Check Unmerged PRs"
+          artifacts: []
+          branches: []
+          pull-requests: []
+---
