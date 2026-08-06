@@ -122,7 +122,7 @@ createBranches() {
 #################### PHASE 2 ####################
 
 releaseCheE2E() {
-    invokeAction eclipse/che "Release Che E2E" "5536792" "version=${CHE_VERSION}"
+    invokeAction eclipse/che "RBuild/Publish Next Che E2E Tests to npmjs" "16019004" "release-version=${CHE_VERSION}"
 }
 
 releasePluginRegistry() {
@@ -171,7 +171,6 @@ set -e
 # Release projects that don't depend on other projects
 set +x 
 if [[ ${PHASES} == *"1"* ]]; then
-    releaseCheCode
     releaseJetBrainsIDE
     releaseConfigbump
     releaseMachineExec
@@ -180,8 +179,6 @@ if [[ ${PHASES} == *"1"* ]]; then
     createBranches
 fi
 wait
-# shellcheck disable=SC2086
-verifyContainerExistsWithTimeout ${REGISTRY}/che-incubator/che-code:${CHE_VERSION} 60
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/che-incubator/che-idea-dev-server:${CHE_VERSION} 60
 # shellcheck disable=SC2086
@@ -201,11 +198,14 @@ set +x
 # Release e2e (depends on che-server, devworkspace-generator)
 # Release plugin registry (depends on machine-exec)
 if [[ ${PHASES} == *"2"* ]]; then
+    releaseCheCode
     releaseCheE2E
     releasePluginRegistry
     releaseDashboard
 fi
 wait
+# shellcheck disable=SC2086
+verifyContainerExistsWithTimeout ${REGISTRY}/che-incubator/che-code:${CHE_VERSION} 60
 # shellcheck disable=SC2086
 verifyContainerExistsWithTimeout ${REGISTRY}/${ORGANIZATION}/che-e2e:${CHE_VERSION} 30
 # shellcheck disable=SC2086
