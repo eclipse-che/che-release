@@ -1,0 +1,297 @@
+---
+# Eclipse Che Release Configuration
+#
+# This file defines the multi-phase release process for Eclipse Che components.
+# Used by:
+# - scripts/release-info.sh: Display comprehensive release status
+# - make-release.sh: Orchestrate releases (future enhancement)
+#
+# Structure:
+# - phases: Release phases with dependencies (phase-1 through phase-6)
+# - projects: For each project - repo, workflow, artifacts, branches, PRs
+# - artifacts: Container images (Quay), NPM packages, GitHub releases, websites, website-version
+#   - image: Quay.io container image (checks if tag exists)
+#   - npmjs: NPM package (checks if version published)
+#   - github-release: GitHub release (checks if tag exists)
+#   - website: Website URL (checks if accessible)
+#   - website-version: Website with version verification (checks if HTML element with class
+#     "version-menu-toggle" contains the release version)
+# - pull-requests: Expected PRs with title patterns and merge requirements
+#
+release-config:
+  phases:
+    phase-1:
+      description: "Independent projects (no Che dependencies)"
+      projects:
+        - name: che-code
+          repo: che-incubator/che-code
+          workflow:
+            name: "Release Che Code"
+            id: 34764281
+            parameters:
+              - key: version
+                value: "{version}"
+          artifacts:
+            - type: image
+              name: quay.io/che-incubator/che-code
+              timeout: 60
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+        - name: jetbrains-ide-dev-server
+          repo: che-incubator/jetbrains-ide-dev-server
+          workflow:
+            name: "Release JetBrains IDE Dev Server"
+            id: 120670986
+            parameters:
+              - key: version
+                value: "{version}"
+          artifacts:
+            - type: image
+              name: quay.io/che-incubator/che-idea-dev-server
+              timeout: 60
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+        - name: configbump
+          repo: che-incubator/configbump
+          workflow:
+            name: "Release Che Configbump"
+            id: 69757177
+            parameters:
+              - key: version
+                value: "{version}"
+          artifacts:
+            - type: image
+              name: quay.io/che-incubator/configbump
+              timeout: 60
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+        - name: che-machine-exec
+          repo: eclipse-che/che-machine-exec
+          workflow:
+            name: "Release Che Machine Exec"
+            id: 7369994
+            parameters:
+              - key: version
+                value: "{version}"
+          artifacts:
+            - type: image
+              name: quay.io/eclipse/che-machine-exec
+              timeout: 60
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+        - name: che-server
+          repo: eclipse-che/che-server
+          workflow:
+            name: "Release Che Server"
+            id: 9230035
+            parameters:
+              - key: version
+                value: "{version}"
+          artifacts:
+            - type: image
+              name: quay.io/eclipse/che-server
+              timeout: 60
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+        - name: devworkspace-generator
+          repo: devfile/devworkspace-generator
+          workflow:
+            name: "Release Che Devworkspace Generator"
+            id: 102323522
+            parameters:
+              - key: version
+                value: "{version}"
+          artifacts:
+            - type: npmjs
+              name: "@eclipse-che/che-devworkspace-generator"
+              timeout: 60
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+        - name: kubernetes-image-puller
+          repo: che-incubator/kubernetes-image-puller
+          workflow:
+            name: "Create branch"
+            id: 5409996
+            parameters:
+              - key: branch
+                value: "{branch}"
+          artifacts: []
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+    phase-2:
+      description: "Projects depending on Phase 1"
+      projects:
+        - name: che-e2e
+          repo: eclipse/che
+          workflow:
+            name: "Release Che E2E"
+            id: 5536792
+            parameters:
+              - key: version
+                value: "{version}"
+          artifacts:
+            - type: image
+              name: quay.io/eclipse/che-e2e
+              timeout: 30
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+        - name: che-code
+          repo: che-incubator/che-code
+          workflow:
+            name: "Release Che Code"
+            id: 34764281
+            parameters:
+              - key: version
+                value: "{version}"
+          artifacts:
+            - type: image
+              name: quay.io/che-incubator/che-code
+              timeout: 60
+          branches:
+            - "{branch}"
+          pull-requests: []
+
+        - name: che-dashboard
+          repo: eclipse-che/che-dashboard
+          workflow:
+            name: "Release Che Dashboard"
+            id: 3152474
+            parameters:
+              - key: version
+                value: "{version}"
+          artifacts:
+            - type: image
+              name: quay.io/eclipse/che-dashboard
+              timeout: 60
+          branches:
+            - "{branch}"
+          pull-requests: []
+    phase-3:
+      description: "Projects depending on Phase 2"
+      projects:
+        - name: che-plugin-registry
+          repo: eclipse-che/che-plugin-registry
+          workflow:
+            name: "Release Che Plugin Registry"
+            id: 4191251
+            parameters:
+              - key: version
+                value: "{version}"
+          artifacts:
+            - type: image
+              name: quay.io/eclipse/che-plugin-registry
+              timeout: 30
+          branches:
+            - "{branch}"
+    phase-4:
+      description: "Operator (depends on all previous phases)"
+      projects:
+        - name: che-operator
+          repo: eclipse-che/che-operator
+          workflow:
+            name: "Release Che Operator"
+            id: 3593082
+            parameters:
+              - key: version
+                value: "{version}"
+            pause: true
+          artifacts:
+            - type: image
+              name: quay.io/eclipse/che-operator
+          branches:
+            - "{branch}"
+          pull-requests:
+            - title-pattern: "{version} release"
+              target-branch: "{branch}"
+              required-for-completion: true
+            - title-pattern: "Copy {version} csv to main"
+              target-branch: main
+              required-for-completion: true
+
+    phase-5:
+      description: "Downstream releases (manual steps required)"
+      projects:
+        - name: community-operator
+          repo: redhat-openshift-ecosystem/community-operators-prod
+          workflow:
+            name: "Release Community Operator PRs"
+          artifacts: []
+          branches: []
+          pull-requests:
+            - title-pattern: "operator eclipse-che ({version})"
+              target-repo: redhat-openshift-ecosystem/community-operators-prod
+              required-for-completion: true
+
+        - name: chectl
+          repo: che-incubator/chectl
+          workflow:
+            name: "Release"
+          artifacts:
+            - type: github-release
+              repo: che-incubator/chectl
+          branches:
+            - "{branch}"
+          pull-requests:
+            - title-pattern: "Release version {version}"
+              target-branch: "{branch}"
+              required-for-completion: true
+
+        - name: che-docs
+          repo: eclipse-che/che-docs
+          workflow:
+            name: "Release Che Docs"
+          artifacts: []
+          branches:
+            - publication
+          pull-requests:
+            - title-pattern: "chore: Bump to {version} in main"
+              target-branch: "main"
+              required-for-completion: true
+            - title-pattern: "chore: Bump to {branch} in publication-builder"
+              target-branch: "publication-builder"
+              required-for-completion: true
+            - title-pattern: "chore: Bump to {version} in {branch}"
+              target-branch: "{branch}"
+              required-for-completion: true
+
+    phase-6:
+      description: "Website and verification"
+      projects:
+        - name: che-website-publish
+          repo: eclipse-che/che-website-publish
+          workflow:
+            name: "Publish"
+          artifacts:
+            - type: website-version
+              url: "https://eclipse.dev/che/docs/stable/"
+          branches: []
+          pull-requests: []
+    phase-7:
+      description: "Final verification"
+      projects:
+        - name: che-release-notes
+          repo: eclipse-che/che
+          workflow:
+            name: "Release Notes Verification"
+          artifacts:
+            - type: github-release-notes
+              repo: eclipse-che/che
+          branches: []
+          pull-requests: []
+---
