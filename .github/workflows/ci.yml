@@ -1,0 +1,16 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Clone source code
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 1
+        persist-credentials: false
+    - name: Run ShellCheck
+      run: |
+        find . -type f -name "*.sh" | xargs shellcheck --external-sources

@@ -35,7 +35,7 @@ if [[ "${BASEBRANCH}" != "${BRANCH}" ]]; then
   git branch -D "${BRANCH}" || true
   git checkout "${BASEBRANCH}" || true
   # if branch exists and FORCENEWBRANCH true, delete from remote before creating new branch
-  if [[ $(git ls-remote --heads ${REPO} "refs/heads/${BRANCH}" || true) != "" ]] && [[ ${FORCENEWBRANCH} -eq 1 ]]; then
+  if [[ $(git ls-remote --heads "${REPO}" "refs/heads/${BRANCH}" || true) != "" ]] && [[ ${FORCENEWBRANCH} -eq 1 ]]; then
     git push origin ":${BRANCH}"
   fi
   git branch "${BRANCH}"
