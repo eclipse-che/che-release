@@ -421,7 +421,7 @@ print_summary() {
     echo "By Phase:"
 
     for phase_key in "${PHASE_ORDER[@]}"; do
-        local phase_num="${phase_key#phase-}"
+        local phase_num="${phase_key#phase_}"
         local phase_desc="${PHASE_DESCRIPTIONS[$phase_key]}"
         local phase_total="${PHASE_TOTAL[$phase_key]:-0}"
         local phase_done="${PHASE_DONE[$phase_key]:-0}"
@@ -506,7 +506,7 @@ print_header "$VERSION" "$BRANCH"
 
 # Process each phase
 for phase_key in $(get_phase_keys); do
-    local_phase_num="${phase_key#phase-}"
+    local_phase_num="${phase_key#phase_}"
     local_phase_desc=$(get_phase_description "$phase_key")
     echo "Phase ${local_phase_num}: ${local_phase_desc}"
     echo "────────────────────────────────────────────────────────────────────────────────"

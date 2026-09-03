@@ -115,7 +115,7 @@ while IFS= read -r image; do
 		digest=""
 		if [[ ${DOCOPY} -eq 1 ]]; then
 			if [[ $VERBOSE -gt 0 ]]; then set -x; fi
-			digest="$(skopeo inspect docker://"${image}" | yq -r '.Digest' | sed -r -e "s#sha256:#-#g")"
+			digest="$(skopeo inspect docker://"${image}" | jq -r '.Digest' | sed -r -e "s#sha256:#-#g")"
 			echo "
 [INFO] Skopeo copy $image to
         ${imageNew}${digest} ... "
