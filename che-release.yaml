@@ -7,7 +7,7 @@
 # - make-release.sh: Orchestrate releases (future enhancement)
 #
 # Structure:
-# - phases: Release phases with dependencies (phase-1 through phase-6)
+# - phases: Release phases with dependencies (phase_1 through phase_6)
 # - projects: For each project - repo, workflow, artifacts, branches, PRs
 # - artifacts: Container images (Quay), NPM packages, GitHub releases, websites, website-version
 #   - image: Quay.io container image (checks if tag exists)
@@ -18,27 +18,11 @@
 #     "version-menu-toggle" contains the release version)
 # - pull-requests: Expected PRs with title patterns and merge requirements
 #
-release-config:
+release_config:
   phases:
-    phase-1:
+    phase_1:
       description: "Independent projects (no Che dependencies)"
       projects:
-        - name: che-code
-          repo: che-incubator/che-code
-          workflow:
-            name: "Release Che Code"
-            id: 34764281
-            parameters:
-              - key: version
-                value: "{version}"
-          artifacts:
-            - type: image
-              name: quay.io/che-incubator/che-code
-              timeout: 60
-          branches:
-            - "{branch}"
-          pull-requests: []
-
         - name: jetbrains-ide-dev-server
           repo: che-incubator/jetbrains-ide-dev-server
           workflow:
@@ -106,10 +90,10 @@ release-config:
         - name: devworkspace-generator
           repo: devfile/devworkspace-generator
           workflow:
-            name: "Release Che Devworkspace Generator"
-            id: 102323522
+            name: "Publish project to npmjs"
+            id: 292732527
             parameters:
-              - key: version
+              - key: release-version
                 value: "{version}"
           artifacts:
             - type: npmjs
@@ -132,16 +116,16 @@ release-config:
             - "{branch}"
           pull-requests: []
 
-    phase-2:
+    phase_2:
       description: "Projects depending on Phase 1"
       projects:
         - name: che-e2e
           repo: eclipse/che
           workflow:
-            name: "Release Che E2E"
-            id: 5536792
+            name: "Build/Publish Next Che E2E Tests to npmjs"
+            id: 16019004
             parameters:
-              - key: version
+              - key: release-version
                 value: "{version}"
           artifacts:
             - type: image
@@ -182,7 +166,7 @@ release-config:
           branches:
             - "{branch}"
           pull-requests: []
-    phase-3:
+    phase_3:
       description: "Projects depending on Phase 2"
       projects:
         - name: che-plugin-registry
@@ -199,7 +183,7 @@ release-config:
               timeout: 30
           branches:
             - "{branch}"
-    phase-4:
+    phase_4:
       description: "Operator (depends on all previous phases)"
       projects:
         - name: che-operator
@@ -224,7 +208,7 @@ release-config:
               target-branch: main
               required-for-completion: true
 
-    phase-5:
+    phase_5:
       description: "Downstream releases (manual steps required)"
       projects:
         - name: community-operator
@@ -270,7 +254,7 @@ release-config:
               target-branch: "{branch}"
               required-for-completion: true
 
-    phase-6:
+    phase_6:
       description: "Website and verification"
       projects:
         - name: che-website-publish
@@ -282,7 +266,7 @@ release-config:
               url: "https://eclipse.dev/che/docs/stable/"
           branches: []
           pull-requests: []
-    phase-7:
+    phase_7:
       description: "Final verification"
       projects:
         - name: che-release-notes
@@ -294,4 +278,3 @@ release-config:
               repo: eclipse-che/che
           branches: []
           pull-requests: []
----

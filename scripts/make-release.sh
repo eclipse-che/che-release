@@ -15,13 +15,15 @@ source "${SCRIPTS_DIR}"/lib/yaml-parser.sh
 
 usage ()
 {
-  echo "Usage: $0  --version [CHE VERSION TO RELEASE] --parent-version [CHE PARENT VERSION] --phases [LIST OF PHASES]
+  echo "Usage: $0  --version [CHE VERSION TO RELEASE] --parent-version [CHE PARENT VERSION] --phases [LIST OF PHASES] [--dry-run]
 
 # Comma-separated phases to perform.
 # Default: 1,2,3
 # Omit phases that have successfully run.
+# --dry-run: Show what would be done without making any API calls or changes
 "
   echo "Example: $0 --version 7.75.0 --phases 1,2,3"; echo
+  echo "Example: $0 --version 7.75.0 --phases 1,2,3 --dry-run"; echo
   exit 1
 }
 
@@ -79,7 +81,11 @@ executePhaseWorkflows() {
     local version="$2"
     local branch="$3"
 
-    echo "[INFO] Executing workflows for ${phase_key}..."
+    if [[ "$DRY_RUN" == "true" ]]; then
+        echo "[DRY-RUN] Would execute workflows for ${phase_key}..."
+    else
+        echo "[INFO] Executing workflows for ${phase_key}..."
+    fi
 
     local projects_json=$(get_phase_projects_json "$phase_key")
     local project_count=$(echo "$projects_json" | jq -r 'length')
@@ -108,15 +114,29 @@ executePhaseWorkflows() {
             j=$((j + 1))
         done
 
-        # Invoke workflow in background
-        echo "[INFO] Invoking ${name} workflow..."
-        invokeAction "$repo" "$wf_name" "$wf_id" "$params" &
+        if [[ "$DRY_RUN" == "true" ]]; then
+            echo "[DRY-RUN] Would invoke workflow:"
+            echo "  Repository: ${repo}"
+            echo "  Workflow: ${wf_name} (ID: ${wf_id})"
+            echo "  Parameters: ${params}"
+        else
+            # Invoke workflow in background
+            echo "[INFO] Invoking ${name} workflow..."
+            invokeAction "$repo" "$wf_name" "$wf_id" "$params" &
+        fi
 
         i=$((i + 1))
     done
 
-    wait
-    echo "[INFO] All ${phase_key} workflows invoked."
+    if [[ "$DRY_RUN" != "true" ]]; then
+        wait
+    fi
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        echo "[DRY-RUN] All ${phase_key} workflows would be invoked."
+    else
+        echo "[INFO] All ${phase_key} workflows invoked."
+    fi
 }
 
 verifyPhaseArtifacts() {
@@ -124,7 +144,11 @@ verifyPhaseArtifacts() {
     local version="$2"
     local branch="$3"
 
-    echo "[INFO] Verifying artifacts for ${phase_key}..."
+    if [[ "$DRY_RUN" == "true" ]]; then
+        echo "[DRY-RUN] Would verify artifacts for ${phase_key}..."
+    else
+        echo "[INFO] Verifying artifacts for ${phase_key}..."
+    fi
 
     local projects_json=$(get_phase_projects_json "$phase_key")
     local project_count=$(echo "$projects_json" | jq -r 'length')
@@ -146,16 +170,20 @@ verifyPhaseArtifacts() {
             local artifact_name=$(echo "$artifact" | jq -r '.name')
             local timeout=$(echo "$artifact" | jq -r '.timeout // 30')
 
-            case "$type" in
-                image)
-                    # shellcheck disable=SC2086
-                    verifyContainerExistsWithTimeout "${artifact_name}:${version}" $timeout
-                    ;;
-                npmjs)
-                    # shellcheck disable=SC2086
-                    verifyNpmJsPackageExistsWithTimeoutAndExit "${artifact_name}@${version}" $timeout
-                    ;;
-            esac
+            if [[ "$DRY_RUN" == "true" ]]; then
+                echo "[DRY-RUN] Would verify ${type}: ${artifact_name}:${version} (timeout: ${timeout}m)"
+            else
+                case "$type" in
+                    image)
+                        # shellcheck disable=SC2086
+                        verifyContainerExistsWithTimeout "${artifact_name}:${version}" $timeout
+                        ;;
+                    npmjs)
+                        # shellcheck disable=SC2086
+                        verifyNpmJsPackageExistsWithTimeoutAndExit "${artifact_name}@${version}" $timeout
+                        ;;
+                esac
+            fi
             j=$((j + 1))
         done
 
@@ -169,21 +197,32 @@ verifyPhaseArtifacts() {
             local expanded_branch=$(expand_placeholders "$branch_pattern" "$version" "$branch")
             local timeout=60
 
-            # shellcheck disable=SC2086
-            verifyBranchExistsWithTimeoutAndExit "https://github.com/${repo}.git" $expanded_branch $timeout
+            if [[ "$DRY_RUN" == "true" ]]; then
+                echo "[DRY-RUN] Would verify branch: ${repo}/tree/${expanded_branch} (timeout: ${timeout}m)"
+            else
+                # shellcheck disable=SC2086
+                verifyBranchExistsWithTimeoutAndExit "https://github.com/${repo}.git" $expanded_branch $timeout
+            fi
             k=$((k + 1))
         done
 
         i=$((i + 1))
     done
 
-    echo "[INFO] All ${phase_key} artifacts verified."
+    if [[ "$DRY_RUN" == "true" ]]; then
+        echo "[DRY-RUN] All ${phase_key} artifacts would be verified."
+    else
+        echo "[INFO] All ${phase_key} artifacts verified."
+    fi
 }
+
+DRY_RUN=false
 
 while [[ "$#" -gt 0 ]]; do
   case $1 in
     '-v'|'--version') CHE_VERSION="$2"; shift 1;;
     '-p'|'--phases') PHASES="$2"; shift 1;;
+    '--dry-run') DRY_RUN=true;;
   esac
   shift 1
 done
@@ -192,19 +231,37 @@ if [[ ! ${CHE_VERSION} ]] || [[ ! ${PHASES} ]] ; then
   usage
 fi
 
-set +x
-mkdir "$HOME/.ssh/"
-echo "$CHE_GITHUB_SSH_KEY" | base64 -d > "$HOME/.ssh/id_rsa"
-chmod 0400 "$HOME/.ssh/id_rsa"
-ssh-keyscan github.com >> ~/.ssh/known_hosts
-set -x
+if [[ "$DRY_RUN" == "true" ]]; then
+    echo "[DRY-RUN] Skipping SSH key setup"
+    echo "[DRY-RUN] Skipping blocker issues check"
+    echo "[DRY-RUN] Skipping git config setup"
+else
+    set +x
+    mkdir "$HOME/.ssh/"
+    echo "$CHE_GITHUB_SSH_KEY" | base64 -d > "$HOME/.ssh/id_rsa"
+    chmod 0400 "$HOME/.ssh/id_rsa"
+    ssh-keyscan github.com >> ~/.ssh/known_hosts
+    set -x
 
-#################### SETUP ####################
+    #################### SETUP ####################
 
-checkForBlockerIssues
-setupGitconfig
+    checkForBlockerIssues
+    setupGitconfig
+fi
+
 evaluateCheVariables
 echo "BASH VERSION = $BASH_VERSION"
+
+if [[ "$DRY_RUN" == "true" ]]; then
+    echo ""
+    echo "=========================================="
+    echo "DRY-RUN MODE ENABLED"
+    echo "No workflows will be triggered"
+    echo "No artifacts will be verified"
+    echo "=========================================="
+    echo ""
+fi
+
 set -e
 
 # Parse YAML config
@@ -212,9 +269,38 @@ parse_release_config "$REPO_ROOT/che-release.yaml"
 
 #################### DYNAMIC PHASE EXECUTION ####################
 
+# Find the first requested phase number
+first_requested_phase=""
+for phase_key in $(get_phase_keys); do
+    phase_num="${phase_key#phase_}"
+    if [[ ${PHASES} == *"${phase_num}"* ]]; then
+        if [[ -z "$first_requested_phase" ]] || [[ "$phase_num" -lt "$first_requested_phase" ]]; then
+            first_requested_phase="$phase_num"
+        fi
+    fi
+done
+
+# Verify artifacts from all phases before the first requested phase
+if [[ -n "$first_requested_phase" ]]; then
+    for phase_key in $(get_phase_keys); do
+        phase_num="${phase_key#phase_}"
+        phase_desc=$(get_phase_description "$phase_key")
+
+        # Only verify if this phase is before the first requested phase
+        if [[ "$phase_num" -lt "$first_requested_phase" ]]; then
+            echo "[INFO] =========================================="
+            echo "[INFO] Phase ${phase_num}: ${phase_desc} (verification only)"
+            echo "[INFO] =========================================="
+
+            set +x
+            verifyPhaseArtifacts "$phase_key" "$CHE_VERSION" "$BRANCH"
+        fi
+    done
+fi
+
 # Execute requested phases, stopping after any phase with a "pause" workflow
 for phase_key in $(get_phase_keys); do
-    phase_num="${phase_key#phase-}"
+    phase_num="${phase_key#phase_}"
     phase_desc=$(get_phase_description "$phase_key")
 
     # Check if this phase is requested
@@ -235,6 +321,14 @@ for phase_key in $(get_phase_keys); do
         fi
     fi
 done
+
+if [[ "$DRY_RUN" == "true" ]]; then
+    echo ""
+    echo "=========================================="
+    echo "DRY-RUN COMPLETED"
+    echo "No actual changes were made"
+    echo "=========================================="
+fi
 
 # Cleanup
 rm -f "$RELEASE_CONFIG_FILE"
