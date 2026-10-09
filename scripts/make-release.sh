@@ -15,15 +15,17 @@ source "${SCRIPTS_DIR}"/lib/yaml-parser.sh
 
 usage ()
 {
-  echo "Usage: $0  --version [CHE VERSION TO RELEASE] --parent-version [CHE PARENT VERSION] --phases [LIST OF PHASES] [--dry-run]
+  echo "Usage: $0  --version [CHE VERSION TO RELEASE] [--phases [LIST OF PHASES]] [--dry-run]
 
-# Comma-separated phases to perform.
-# Default: 1,2,3
+# Comma-separated phases to perform, e.g. (1,2,3,4).
+# If omitted: automatically run all phases with orchestration:true
 # Omit phases that have successfully run.
 # --dry-run: Show what would be done without making any API calls or changes
 "
+  echo "Example: $0 --version 7.75.0"; echo
   echo "Example: $0 --version 7.75.0 --phases 1,2,3"; echo
   echo "Example: $0 --version 7.75.0 --phases 1,2,3 --dry-run"; echo
+  echo "Example: $0 --version 7.75.0 --dry-run"; echo
   exit 1
 }
 
@@ -52,10 +54,6 @@ setupGitconfig() {
 
   # suppress warnings about how to reconcile divergent branches
   git config --global pull.ff only 
-
-  # NOTE when invoking action from che-incubator/* repos (not eclipse/che* repos), must use CHE_INCUBATOR_BOT_GITHUB_TOKEN
-  # default to CHE_BOT GH token
-  export GITHUB_TOKEN="${CHE_BOT_GITHUB_TOKEN}"
 }
 
 evaluateCheVariables() {
@@ -227,7 +225,7 @@ while [[ "$#" -gt 0 ]]; do
   shift 1
 done
 
-if [[ ! ${CHE_VERSION} ]] || [[ ! ${PHASES} ]] ; then
+if [[ ! ${CHE_VERSION} ]]; then
   usage
 fi
 
@@ -267,6 +265,31 @@ set -e
 # Parse YAML config
 parse_release_config "$REPO_ROOT/che-release.yaml"
 
+# Auto-determine phases if not provided
+if [[ -z "${PHASES}" ]]; then
+    echo "[INFO] No phases specified, auto-determining phases to run..."
+    auto_phases=""
+    for phase_key in $(get_phase_keys); do
+        phase_num="${phase_key#phase_}"
+        orchestration=$(get_phase_orchestration "$phase_key")
+
+        if [[ "$orchestration" == "true" ]]; then
+            # Phase has orchestration:true, add it
+            if [[ -n "$auto_phases" ]]; then
+                auto_phases="${auto_phases},${phase_num}"
+            else
+                auto_phases="${phase_num}"
+            fi
+            echo "[INFO] Including phase ${phase_num} (orchestration: true)"
+        else
+            echo "[INFO] Skipping phase ${phase_num} (orchestration: false or not set)"
+        fi
+    done
+
+    PHASES="$auto_phases"
+    echo "[INFO] Auto-determined phases: ${PHASES}"
+fi
+
 #################### DYNAMIC PHASE EXECUTION ####################
 
 # Find the first requested phase number
@@ -298,13 +321,23 @@ if [[ -n "$first_requested_phase" ]]; then
     done
 fi
 
-# Execute requested phases, stopping after any phase with a "pause" workflow
+# Execute requested phases, continuing as long as orchestration is true
 for phase_key in $(get_phase_keys); do
     phase_num="${phase_key#phase_}"
     phase_desc=$(get_phase_description "$phase_key")
+    orchestration=$(get_phase_orchestration "$phase_key")
 
     # Check if this phase is requested
     if [[ ${PHASES} == *"${phase_num}"* ]]; then
+        # Check if orchestration is enabled for this phase
+        if [[ "$orchestration" != "true" ]]; then
+            echo "[INFO] =========================================="
+            echo "[INFO] Phase ${phase_num}: ${phase_desc}"
+            echo "[INFO] Stopping: orchestration is not enabled for this phase"
+            echo "[INFO] =========================================="
+            break
+        fi
+
         echo "[INFO] =========================================="
         echo "[INFO] Phase ${phase_num}: ${phase_desc}"
         echo "[INFO] =========================================="
@@ -312,13 +345,6 @@ for phase_key in $(get_phase_keys); do
         set +x
         executePhaseWorkflows "$phase_key" "$CHE_VERSION" "$BRANCH"
         verifyPhaseArtifacts "$phase_key" "$CHE_VERSION" "$BRANCH"
-
-        # Check if any workflow in this phase has pause:true
-        projects_json=$(get_phase_projects_json "$phase_key")
-        if echo "$projects_json" | jq -e '.[] | select(.workflow.pause == true)' > /dev/null 2>&1; then
-            echo "[INFO] Phase ${phase_num} contains a workflow with pause=true, stopping here."
-            break
-        fi
     fi
 done
 

@@ -5,7 +5,10 @@
 computeWorkflowId() {
     this_repo=$1
     this_action_name=$2
-    workflow_id=$(curl -sSL "https://api.github.com/repos/${this_repo}/actions/workflows" -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3+json" | jq --arg search_field "${this_action_name}" '.workflows[] | select(.name == $search_field).id');
+    local this_github_token
+    this_github_token=$(get_github_token "$this_repo")
+
+    workflow_id=$(curl -sSL "https://api.github.com/repos/${this_repo}/actions/workflows" -H "Authorization: token ${this_github_token}" -H "Accept: application/vnd.github.v3+json" | jq --arg search_field "${this_action_name}" '.workflows[] | select(.name == $search_field).id');
     # echo "workflow_id = $workflow_id"
     if [[ ! $workflow_id ]]; then
         echo "[ERROR] Could not compute workflow id from https://api.github.com/repos/${this_repo}/actions/workflows - check your GITHUB_TOKEN is active"
@@ -50,11 +53,8 @@ invokeAction() {
         inputsJson=$(echo "${inputsJson}" | jq ". + {\"${key}\": \"${value}\"}")
     done
 
-    if [[ ${this_repo} == "che-incubator"* ]] || [[ ${this_repo} == "devfile"* ]] || [[ ${this_repo} == "che-dockerfiles"* ]]; then
-        this_github_token=${CHE_INCUBATOR_BOT_GITHUB_TOKEN}
-    else
-        this_github_token=${GITHUB_TOKEN}
-    fi
+    local this_github_token
+    this_github_token=$(get_github_token "$this_repo")
 
     curl -sSL "https://api.github.com/repos/${this_repo}/actions/workflows/${workflow_id}/dispatches" -X POST -H "Authorization: token ${this_github_token}" -H "Accept: application/vnd.github.v3+json" -d "{\"ref\":\"${workflow_ref}\",\"inputs\": ${inputsJson} }" || die_with "[ERROR] Problem invoking action https://github.com/${this_repo}/actions?query=workflow%3A%22${this_action_name// /+}%22"
     echo "[INFO] Invoked '${this_action_name}' action ($workflow_id) - see https://github.com/${this_repo}/actions?query=workflow%3A%22${this_action_name// /+}%22"
@@ -92,11 +92,28 @@ verifyBranchExistsWithTimeoutAndExit()
 }
 
 get_github_token() {
-    local repo="$1"
+    local repo="${1:-}"
+
+    # If no repo specified, return any available token
+    if [[ -z "$repo" ]]; then
+        echo "${CHE_BOT_GITHUB_TOKEN:-${CHE_INCUBATOR_BOT_GITHUB_TOKEN:-${GITHUB_TOKEN:-}}}"
+        return
+    fi
+
+    # Priority 1: Use repo-specific bot tokens if provided
+    # Priority 2: Fall back to GITHUB_TOKEN (user's personal access token)
     if [[ "$repo" == "che-incubator"* ]] || [[ "$repo" == "devfile"* ]] || [[ "$repo" == "che-dockerfiles"* ]]; then
-        echo "${CHE_INCUBATOR_BOT_GITHUB_TOKEN:-}"
+        if [[ -n "${CHE_INCUBATOR_BOT_GITHUB_TOKEN:-}" ]]; then
+            echo "${CHE_INCUBATOR_BOT_GITHUB_TOKEN}"
+        else
+            echo "${GITHUB_TOKEN:-}"
+        fi
     else
-        echo "${CHE_BOT_GITHUB_TOKEN:-}"
+        if [[ -n "${CHE_BOT_GITHUB_TOKEN:-}" ]]; then
+            echo "${CHE_BOT_GITHUB_TOKEN}"
+        else
+            echo "${GITHUB_TOKEN:-}"
+        fi
     fi
 }
 
