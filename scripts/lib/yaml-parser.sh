@@ -37,6 +37,11 @@ get_phase_description() {
     yq -r ".release_config.phases.${phase_key}.description" "$RELEASE_CONFIG_FILE"
 }
 
+get_phase_orchestration() {
+    local phase_key="$1"
+    yq -r ".release_config.phases.${phase_key}.orchestration // false" "$RELEASE_CONFIG_FILE"
+}
+
 get_phase_projects_json() {
     local phase_key="$1"
     yq ".release_config.phases.${phase_key}.projects" "$RELEASE_CONFIG_FILE"

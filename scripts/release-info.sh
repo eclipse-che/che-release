@@ -25,7 +25,9 @@ usage() {
     echo "  version    Version in format X.Y.Z (e.g., 7.120.0)"
     echo "  --debug    Show detailed API call information"
     echo ""
-    echo "Example: $0 7.120.0"
+    echo "Environment Variables:"
+    echo "  GITHUB_TOKEN    GitHub personal access token or organization bot token"
+    echo "                  Required for API access to check release status"
     exit 1
 }
 
@@ -477,26 +479,34 @@ fi
 validate_version "$VERSION"
 BRANCH=$(calculate_branch "$VERSION")
 
-# Check tokens
-if [[ -z "${CHE_BOT_GITHUB_TOKEN:-}" ]]; then
-    echo "[ERROR] CHE_BOT_GITHUB_TOKEN is not set" >&2
-    echo "Set it with: export CHE_BOT_GITHUB_TOKEN=<your-token>" >&2
+# Check token availability
+check_token=$(get_github_token)
+if [[ -z "$check_token" ]]; then
+    echo "[ERROR] No GitHub token available" >&2
+    echo "Set one of: GITHUB_TOKEN, CHE_BOT_GITHUB_TOKEN, or CHE_INCUBATOR_BOT_GITHUB_TOKEN" >&2
     exit 1
 fi
 
-if [[ -z "${CHE_INCUBATOR_BOT_GITHUB_TOKEN:-}" ]]; then
-    echo "[WARN] CHE_INCUBATOR_BOT_GITHUB_TOKEN is not set, using CHE_BOT_GITHUB_TOKEN for all repos" >&2
-    export CHE_INCUBATOR_BOT_GITHUB_TOKEN="$CHE_BOT_GITHUB_TOKEN"
-fi
+# Validate token by checking rate limit
+debug_log "Validating GitHub token..."
+remaining=$(check_rate_limit "$check_token") || {
+    echo "[ERROR] Failed to authenticate with GitHub API" >&2
+    echo "One of the provided tokens (GITHUB_TOKEN, CHE_BOT_GITHUB_TOKEN, or CHE_INCUBATOR_BOT_GITHUB_TOKEN) may be invalid or expired" >&2
+    exit 1
+}
 
-# Check rate limit
-remaining=$(check_rate_limit "$CHE_BOT_GITHUB_TOKEN") || true
-if [[ "$remaining" == "0" ]]; then
+if [[ "$remaining" == "unknown" ]]; then
+    echo "[ERROR] Failed to validate GitHub token" >&2
+    echo "The token may be invalid, expired, or lack required permissions" >&2
+    exit 1
+elif [[ "$remaining" == "0" ]]; then
     echo "[ERROR] GitHub API rate limit exhausted. Try again later." >&2
     exit 1
-elif [[ "$remaining" != "unknown" ]] && [[ "$remaining" -lt 100 ]]; then
+elif [[ "$remaining" -lt 100 ]]; then
     echo "[WARN] GitHub API rate limit low: ${remaining} requests remaining" >&2
 fi
+
+debug_log "Token validated successfully. Rate limit remaining: ${remaining}"
 
 # Parse config
 parse_release_config "$REPO_ROOT/che-release.yaml"

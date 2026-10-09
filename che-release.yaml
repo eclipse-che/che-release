@@ -13,7 +13,6 @@
 #   - image: Quay.io container image (checks if tag exists)
 #   - npmjs: NPM package (checks if version published)
 #   - github-release: GitHub release (checks if tag exists)
-#   - website: Website URL (checks if accessible)
 #   - website-version: Website with version verification (checks if HTML element with class
 #     "version-menu-toggle" contains the release version)
 # - pull-requests: Expected PRs with title patterns and merge requirements
@@ -22,6 +21,7 @@ release_config:
   phases:
     phase_1:
       description: "Independent projects (no Che dependencies)"
+      orchestration: true
       projects:
         - name: jetbrains-ide-dev-server
           repo: che-incubator/jetbrains-ide-dev-server
@@ -118,6 +118,7 @@ release_config:
 
     phase_2:
       description: "Projects depending on Phase 1"
+      orchestration: true
       projects:
         - name: che-e2e
           repo: eclipse/che
@@ -168,6 +169,7 @@ release_config:
           pull-requests: []
     phase_3:
       description: "Projects depending on Phase 2"
+      orchestration: true
       projects:
         - name: che-plugin-registry
           repo: eclipse-che/che-plugin-registry
@@ -185,6 +187,7 @@ release_config:
             - "{branch}"
     phase_4:
       description: "Operator (depends on all previous phases)"
+      orchestration: true
       projects:
         - name: che-operator
           repo: eclipse-che/che-operator
@@ -194,7 +197,6 @@ release_config:
             parameters:
               - key: version
                 value: "{version}"
-            pause: true
           artifacts:
             - type: image
               name: quay.io/eclipse/che-operator
